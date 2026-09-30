@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">CyberNative seed-circuit mark</title>
+  <desc id="desc">Two geometric leaves rise from a circuit stem with a magenta node.</desc>
+  <g fill="none" stroke="#0e1427" stroke-linecap="round" stroke-linejoin="round" stroke-width="6">
+    <path d="M32 53V27"/>
+    <path d="M32 36C19 36 12 29 12 16c13 0 20 7 20 20Z" fill="#0db8ab"/>
+    <path d="M32 27C45 27 52 20 52 7 39 7 32 14 32 27Z" fill="#0db8ab"/>
+    <path d="M20 53h24"/>
+  </g>
+  <circle cx="32" cy="53" r="6" fill="#a82b99" stroke="#0e1427" stroke-width="3"/>
+</svg>

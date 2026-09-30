@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Qwen-Image 2.1 ComfyUI workflow check · wrong loader, missing nodes, PE system prompt · free, runs in your browser</title>
+  <meta name="description" content="Drop in a Qwen-Image 2.1 ComfyUI workflow and see which file belongs in which loader, which ComfyUI version the nodes need, and whether the prompt enhancer gets its system prompt. Nothing is uploaded.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/Fraunces144ptSoft-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/IBMPlexSans-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/IBMPlexMono-Regular-Latin1.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#check">Skip to the check</a>
+  <header class="site-header">
+    <div class="wrap">
+      <span class="brand"><img src="assets/mark.svg" alt="" width="28" height="28">CyberNative <span class="product">Qwen-Image 2.1 preflight</span></span>
+      <span class="local-badge" title="The check runs in this tab. The page's security policy blocks every network request.">Runs offline in this tab</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-copy">
+          <p class="label"><b>Free check</b> · Qwen-Image 2.1 in ComfyUI</p>
+          <h1>Check your Qwen&#8209;Image&nbsp;2.1 workflow before the first&nbsp;run.</h1>
+          <p class="lede">Qwen-Image 2.1 needs up to four separate model files. Some mistakes run without an error: the prompt enhancer in the text-encoder slot, or the enhancer without its system prompt. Drop in your workflow and get a short list of what to fix.</p>
+          <p class="privacy"><span class="label-limit">Private</span> Your workflow never leaves this page. Nothing is uploaded or stored, and the page’s security policy blocks all network requests.</p>
+          <div class="actions"><a class="btn btn-primary" href="#check">Check a workflow</a></div>
+          <ul class="terms">
+            <li>UI or API format</li>
+            <li>Subgraphs included</li>
+            <li>Every rule cites its source</li>
+          </ul>
+        </div>
+        <figure class="rack-figure" aria-labelledby="rack-caption">
+          <p class="label" id="rack-caption"><b>Four files</b> · where each one goes</p>
+          <ol class="rack">
+            <li class="bay"><span class="num">1</span><span class="bay-body"><b>Prompt enhancer <i>· optional</i></b><code>qwen3.5_9b_qwen_image_2.1_pe_t2i / _pe_i2i</code><span class="bay-to">CLIPLoader → <em>Generate Text</em></span></span></li>
+            <li class="bay"><span class="num">2</span><span class="bay-body"><b>Text encoder</b><code>qwen3vl_8b_int8_convrot · bf16 · w4a8</code><span class="bay-to">CLIPLoader, type qwen_image → <em>Text Encode Qwen Image 2.1</em></span></span></li>
+            <li class="bay"><span class="num">3</span><span class="bay-body"><b>Diffusion model</b><code>qwen_image_2.1_int8_convrot · bf16 · .gguf</code><span class="bay-to">Load Diffusion Model <i>· GGUF: Unet Loader (GGUF)</i></span></span></li>
+            <li class="bay"><span class="num">4</span><span class="bay-body"><b>VAE</b><code>qwen_image_2.1_vae_bf16</code><span class="bay-to">Load VAE</span></span></li>
+          </ol>
+          <figcaption>The PE and the text encoder both load through CLIPLoader from models/text_encoders/. Only the text encoder feeds the image encoder. The PE feeds Generate Text, and its output becomes your prompt. Swap them and ComfyUI still runs, but the images come out garbled.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="finding" aria-labelledby="finding-title">
+      <div class="wrap">
+        <div>
+          <p class="label"><b>Found in the official templates</b> · read 2026-09-29</p>
+          <h2 id="finding-title">Both Qwen Image 2.1 templates can run the prompt enhancer without its system prompt.</h2>
+        </div>
+        <div class="finding-body">
+          <p><b>Image Edit</b> ships with the enhancer switched on, and its system prompt node is not connected to anything.</p>
+          <p><b>Text to Image</b> connects the system prompt, but leaves Generate Text’s <code>use_default_template</code> off. ComfyUI 0.38.0 passes <code>system_prompt</code> only when that setting is on, so the prompt is dropped. The enhancer is off by default, so this starts when you switch it on.</p>
+          <p class="fix-line"><span class="label">Fix</span> Connect the system prompt to <code>system_prompt</code>, turn <code>use_default_template</code> on, and delete the <code>&lt;|im_start|&gt;system</code> / <code>&lt;|im_end|&gt;</code> wrapper from the text. The check below finds all three.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool" id="check" aria-labelledby="tool-title">
+      <div class="wrap">
+        <div class="tool-head">
+          <h2 id="tool-title">Check a workflow</h2>
+          <p class="sub">In ComfyUI: Workflow › Export (or Export (API)). Then drop the .json file here.</p>
+        </div>
+        <div class="tool-grid">
+          <form id="form" novalidate>
+            <fieldset class="step">
+              <legend><span class="step-num">1</span>Workflow</legend>
+              <div class="drop" id="drop">
+                <p class="drop-main"><b>Drop a workflow .json here</b> <span class="hint">or</span> <label class="file-btn" for="file">choose a file<input id="file" type="file" accept=".json,application/json"></label></p>
+                <p class="hint" id="file-status" aria-live="polite">Or paste the JSON below.</p>
+              </div>
+              <label class="field" for="workflow">Workflow JSON</label>
+              <textarea id="workflow" spellcheck="false" autocomplete="off" placeholder='{"nodes": [ … ], "links": [ … ] }   or   {"3": {"class_type": "KSampler", … }}'></textarea>
+            </fieldset>
+            <fieldset class="step">
+              <legend><span class="step-num">2</span>Your files <span class="hint">· optional</span></legend>
+              <label class="field" for="listing">Model files or startup log<span class="hint">Paste a folder listing (for example the output of <code>ls -R models</code> or <code>dir /s models</code>), file names, or the startup line “ComfyUI version: …”. This finds files in the wrong folder and checks your version.</span></label>
+              <textarea id="listing" spellcheck="false" autocomplete="off" placeholder="models/text_encoders/qwen3vl_8b_int8_convrot.safetensors&#10;models/diffusion_models/qwen-image-2.1-Q4_K_M.gguf&#10;ComfyUI version: 0.38.0"></textarea>
+              <label class="field" for="version">ComfyUI version<span class="hint">If it is not in the log above. Settings › About shows it.</span></label>
+              <input id="version" inputmode="decimal" autocomplete="off" placeholder="0.38.0">
+            </fieldset>
+            <p class="form-error" id="form-error" role="alert" hidden></p>
+            <div class="submit-row">
+              <button class="btn btn-primary" type="submit">Check workflow</button>
+              <button class="btn btn-quiet" type="button" id="example">Try the official Image Edit template</button>
+            </div>
+          </form>
+
+          <section class="result" id="result" aria-live="polite" aria-labelledby="verdict" tabindex="-1">
+            <p class="verdict empty" id="verdict">Your result appears here: a fix list, the four slots as your workflow fills them, a VRAM plan and everything that passed.</p>
+            <ol class="slots" id="slots" hidden></ol>
+            <div id="fixes-wrap" hidden><h3 class="result-h">Fix before you run</h3><ol class="fixes" id="fixes"></ol></div>
+            <div id="vram-wrap" hidden><h3 class="result-h">VRAM plan <span class="hint">· weights only</span></h3><div class="vram" id="vram"></div></div>
+            <div id="notes-wrap" hidden><h3 class="result-h">Notes</h3><ol class="fixes notes" id="notes"></ol></div>
+            <div id="passes-wrap" hidden><h3 class="result-h">Checked and fine</h3><ul class="passes" id="passes"></ul></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="limits" aria-labelledby="limits-title">
+      <div class="wrap">
+        <div>
+          <p class="label"><b>Limits</b></p>
+          <h2 id="limits-title">What a workflow file cannot tell us</h2>
+        </div>
+        <div>
+          <ul class="cannot-see">
+            <li>Launch flags such as <code>--use-sage-attention</code>, which users link to blank images.</li>
+            <li>Your hardware. FP8 weights on Apple Silicon (MPS) are reported to give white images.</li>
+            <li>How ComfyUI moves weights between VRAM, RAM and disk while it runs.</li>
+            <li>Which version of a custom node pack you installed.</li>
+            <li>Image quality, garbled text inside images, or speed.</li>
+          </ul>
+          <p class="after-list">We tested it on 17 problems reported in public threads, each rebuilt from the official templates. It catches the 12 that live in the workflow or file names. It misses the 5 that come from launch flags, hardware or runtime.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>An independent free tool by CyberNative. Not affiliated with Qwen, Alibaba Cloud or Comfy Org.</p>
+      <p class="muted">Rules come from the Comfy-Org and Qwen model repositories, the official ComfyUI templates, and the ComfyUI source at v0.37.0 and v0.38.0. Each result links to its source. The example template is from Comfy-Org/workflow_templates (MIT).</p>
+    </div>
+  </footer>
+  <script type="module" src="page.js"></script>
+</body>
+</html>
