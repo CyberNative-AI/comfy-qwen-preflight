@@ -54,13 +54,14 @@
     <section class="finding" aria-labelledby="finding-title">
       <div class="wrap">
         <div>
-          <p class="label"><b>Found in the official templates</b> · read 2026-09-29</p>
+          <p class="label"><b>Found in the official templates</b> · confirmed in ComfyUI 0.38.0, 2026-09-30</p>
           <h2 id="finding-title">Both Qwen Image 2.1 templates can run the prompt enhancer without its system prompt.</h2>
         </div>
         <div class="finding-body">
-          <p><b>Image Edit</b> ships with the enhancer switched on, and its system prompt node is not connected to anything.</p>
+          <p><b>Image Edit</b> ships with the enhancer switched on. Its system prompt node is not connected, and Generate Text’s <code>use_default_template</code> is off, so connecting the node alone still drops the prompt.</p>
           <p><b>Text to Image</b> connects the system prompt, but leaves Generate Text’s <code>use_default_template</code> off. ComfyUI 0.38.0 passes <code>system_prompt</code> only when that setting is on, so the prompt is dropped. The enhancer is off by default, so this starts when you switch it on.</p>
-          <p class="fix-line"><span class="label">Fix</span> Connect the system prompt to <code>system_prompt</code>, turn <code>use_default_template</code> on, and delete the <code>&lt;|im_start|&gt;system</code> / <code>&lt;|im_end|&gt;</code> wrapper from the text. The check below finds all three.</p>
+          <p>We checked what reaches the enhancer: no system prompt, in either template. It still writes a prompt, but a different one. In our Text to Image test it came out 22–39% shorter.</p>
+          <p class="fix-line"><span class="label">Fix</span> <b>Image Edit:</b> connect the system prompt node to <code>system_prompt</code> and turn <code>use_default_template</code> on.<br><b>Text to Image:</b> turn <code>use_default_template</code> on and delete the <code>&lt;|im_start|&gt;system</code> / <code>&lt;|im_end|&gt;</code> wrapper from the text. The check below finds each step.</p>
         </div>
       </div>
     </section>

@@ -40,6 +40,15 @@ for (const c of DOCUMENTED) {
   });
 }
 
+// Live readback on ComfyUI 0.38.0: the official Image Edit node has use_default_template off, so connecting the prompt alone still drops it.
+test('the Image Edit fix names both steps, and no rule blames the missing prompt for runaway thinking', () => {
+  const edit = check(DOCUMENTED.find(c => c.id === 'D2').workflow(), '').findings.find(f => f.id === 'pe.no-system');
+  assert.match(edit.fix, /turn use_default_template on\. It is off here, and connecting the prompt alone still drops it/);
+  for (const c of [...CONTROLS, ...REPORTED, ...DOCUMENTED]) {
+    for (const f of run(c).findings || []) assert.doesNotMatch(`${f.detail} ${f.fix}`, /runs? out of tokens/, `${c.id || c.name} ${f.id}`);
+  }
+});
+
 const esc = s => String(s).replace(/\|/g, '\\|');
 test.after(() => {
   const rep = results.filter(r => r.kind === 'reported');
