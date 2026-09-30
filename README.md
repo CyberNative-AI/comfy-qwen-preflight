@@ -14,6 +14,8 @@ Each rule cites its primary source in `engine.js` (`SOURCES`): the Comfy-Org and
 
 ## Run
 
+[Reproduce a wrong-loader finding](docs/wrong-loader-walkthrough.md) without model downloads.
+
     python3 -m http.server 8000   # then open http://127.0.0.1:8000/
     npm install && npm test        # engine, labeled set and browser tests (Playwright, Chrome)
 
