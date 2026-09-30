@@ -21,4 +21,10 @@ Each rule cites its primary source in `engine.js` (`SOURCES`): the Comfy-Org and
 
 `fixtures/official/` holds the Comfy-Org Qwen Image 2.1 templates from Comfy-Org/workflow_templates at e7cd011d4d, copyright (c) 2023-present Comfy Org, under the MIT License. Its full text is in [`fixtures/official/LICENSE.txt`](fixtures/official/LICENSE.txt). `example.js` bundles the Image Edit template with that notice, so the page needs no network access (rebuild it with `node tools/build-example.mjs`).
 
+## Licence
+
+The check's code and documentation are available under the [MIT License](LICENSE).
+The templates in `fixtures/official/` and the copy in `example.js` remain Comfy Org's, under [their MIT License](fixtures/official/LICENSE.txt).
+Bundled fonts retain their own licences in `assets/fonts/`.
+
 Not affiliated with Qwen, Alibaba Cloud or Comfy Org.
