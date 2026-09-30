@@ -3,7 +3,13 @@
 // configuration we rebuilt, the rule we expect to fire, and whether ComfyUI already flags it today.
 import { readFileSync } from 'node:fs';
 
-const load = name => JSON.parse(readFileSync(new URL(`../fixtures/official/image_qwen_image_2_1_${name}.json`, import.meta.url), 'utf8'));
+const read = path => readFileSync(new URL(`../fixtures/official/${path}`, import.meta.url), 'utf8');
+const load = name => JSON.parse(read(`image_qwen_image_2_1_${name}.json`));
+// The same templates on upstream main after the 2026-09-30 fix (workflow_templates PR #1298), not yet in a released package.
+const loadMain = name => JSON.parse(read(`main-aec2197f/image_qwen_image_2_1_${name}.json`));
+// Real exports from ComfyUI 0.38.0 with templates package 0.11.70: UI round-trips, Export (API) files and the graphs actually queued.
+export const EXPORT_DIR = 'exports-comfyui-0.38.0';
+const exported = file => () => read(`${EXPORT_DIR}/${file}`);
 
 // Short excerpts of Qwen's system_prompt.txt files (Qwen research licence: we quote the heading and the answer contract only).
 export const T2I_SYSTEM_EXCERPT = '# Image Prompt Rewriting Expert\n\nYou turn a user\'s image request into one long English paragraph …\n\n## Output format\n\nReturn one strictly valid JSON object on a single line, nothing before or after:\n\n{"rewritten_prompt": "<the description>", "wh_ratio": "<e.g. 3:2>"}';
@@ -93,6 +99,22 @@ export const CONTROLS = [
   { name: 'Text to Image, repaired, exported in API format', workflow: () => J(toApi(t2iRepaired())) },
   { name: 'Text to Image, repaired, with a correct folder listing and ComfyUI 0.38.0', workflow: () => J(t2iRepaired()),
     listing: 'ComfyUI version: 0.38.0\nmodels/diffusion_models/qwen_image_2.1_int8_convrot.safetensors\nmodels/text_encoders/qwen3vl_8b_int8_convrot.safetensors\nmodels/text_encoders/qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors\nmodels/vae/qwen_image_2.1_vae_bf16.safetensors' },
+  { name: 'Upstream main Text to Image template (fixed, unreleased), as shipped', upstreamFix: true, workflow: () => J(loadMain('t2i')) },
+  { name: 'Upstream main Text to Image template (fixed, unreleased), PE switched on', upstreamFix: true, workflow: () => { const wf = loadMain('t2i'); setInstance(wf, 'switch', true); return J(wf); } },
+  { name: 'Upstream main Image Edit template (fixed, unreleased), as shipped', upstreamFix: true, workflow: () => J(loadMain('image_edit')) },
+  { name: 'Upstream main Image Edit template (fixed, unreleased), PE switched on', upstreamFix: true, workflow: () => { const wf = loadMain('image_edit'); setInstance(wf, 'switch_1', true); return J(wf); } },
+  { name: 'Real ComfyUI 0.38.0 export: Text to Image repaired, Export (API)', workflow: exported('t2i_repaired.api.json') },
+  { name: 'Real ComfyUI 0.38.0 export: Text to Image repaired, graph as queued', workflow: exported('t2i_repaired.repaired.queued.json') },
+  { name: 'Real ComfyUI 0.38.0 export: Image Edit repaired, Export (API)', workflow: exported('i2i_repaired.api.json') },
+  { name: 'Real ComfyUI 0.38.0 export: Image Edit repaired, graph as queued', workflow: exported('i2i_repaired.repaired.queued.json') },
+];
+
+// Real exports whose result is labelled in advance. A UI round-trip must read exactly like the template file it came from.
+export const EXPORTS = [
+  { id: 'E1', config: 'Text to Image template, UI round-trip through the ComfyUI 0.38.0 frontend', expect: 'pe.system-dropped', status: 'dormant', sameAs: () => J(load('t2i')), workflow: exported('image_qwen_image_2_1_t2i.ui-roundtrip.json') },
+  { id: 'E2', config: 'Image Edit template, UI round-trip through the ComfyUI 0.38.0 frontend', expect: 'pe.no-system', status: 'fail', sameAs: () => J(load('image_edit')), workflow: exported('image_qwen_image_2_1_image_edit.ui-roundtrip.json') },
+  { id: 'E3', config: 'Image Edit, system prompt node connected only, Export (API)', expect: 'pe.system-dropped', status: 'fail', workflow: exported('i2i_link_only.api.json') },
+  { id: 'E4', config: 'Image Edit, system prompt node connected only, graph as queued', expect: 'pe.system-dropped', status: 'fail', workflow: exported('i2i_link_only.linkonly.queued.json') },
 ];
 
 // type: files | nodes | pe | vram | outside. flaggedToday: what ComfyUI itself shows for this configuration.

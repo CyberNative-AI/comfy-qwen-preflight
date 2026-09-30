@@ -20,6 +20,7 @@ export const SOURCES = {
   fp8Files: { label: 'unsloth/Qwen-Image-2.1-FP8: file list', url: 'https://huggingface.co/unsloth/Qwen-Image-2.1-FP8' },
   jsonNode: { label: 'ComfyUI v0.38.0 nodes_string.py: JsonExtractString', url: 'https://github.com/Comfy-Org/ComfyUI/blob/v0.38.0/comfy_extras/nodes_string.py#L410' },
   templates: { label: 'Comfy-Org/workflow_templates: Qwen Image 2.1 templates', url: 'https://github.com/Comfy-Org/workflow_templates/tree/main/templates' },
+  pr1298: { label: 'Comfy-Org/workflow_templates PR #1298: Qwen Image 2.1 PE settings, merged 2026-09-30', url: 'https://github.com/Comfy-Org/workflow_templates/pull/1298' },
   thread4: { label: 'Comfy-Org/Qwen-Image-2.1 discussion #4', url: 'https://huggingface.co/Comfy-Org/Qwen-Image-2.1/discussions/4' },
   thread1: { label: 'Comfy-Org/Qwen-Image-2.1 discussion #1', url: 'https://huggingface.co/Comfy-Org/Qwen-Image-2.1/discussions/1' },
   ggufThread: { label: 'unsloth/Qwen-Image-2.1-GGUF discussion #5', url: 'https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF/discussions/5' },
@@ -89,6 +90,11 @@ const PE_PROFILE = { // pe_core.py PROFILES
 };
 // Measured on the official Text to Image template, ComfyUI 0.38.0, RTX 3090, 2 prompts with fixed seeds, max_length 4096 (2026-09-30):
 // no system turn reached the PE; it still finished, with a 22-39% shorter final prompt and no runaway. Too few runs to claim more.
+// All four runs (with and without the system prompt) finished under the 4,096 cap, using 834-1,850 tokens for thinking plus the final prompt.
+// Below that budget we have no clean run, so a shorter max_length warns; at or above it, a gap to Qwen's figure is a note.
+// The Image Edit PE has not been run, so its budget is never called short or safe.
+const MEASURED_BUDGET = 4096;
+const T2I_USE = '834–1,850';
 const WITHOUT_SYSTEM = 'Without it the PE still writes a prompt, but a different one: in our test of the official Text to Image template it came out 22–39% shorter.';
 
 // Signature headings of the two official system prompts (first line of each system_prompt.txt; the template copies keep them).
@@ -548,7 +554,14 @@ export function check(workflowText, listingText = '', opts = {}) {
     const maxLen = Number(g.value(tg, 'max_length'));
     const thinking = g.value(tg, 'thinking');
     if (Number.isFinite(maxLen) && maxLen < prof.maxTokens) {
-      add({ id: 'pe.max-tokens', area: 'pe', status: st('warn'), stage: 'pe', node: where, title: `max_length is ${maxLen}; Qwen runs this PE with ${prof.maxTokens.toLocaleString('en-US')}`, detail: `A short budget can end the answer inside the thinking block, so no prompt comes out.${thinking === true ? ' Thinking is on here, which uses more of the budget.' : ''} The node's default is 512.${offNote}`, fix: `Set max_length to ${prof.maxTokens}.`, sources: ['peCore', 'textgen', 'thread4'] });
+      const title = `max_length is ${maxLen}; Qwen's runner uses ${prof.maxTokens.toLocaleString('en-US')}`;
+      if (maxLen < MEASURED_BUDGET) {
+        add({ id: 'pe.max-tokens', area: 'pe', status: st('warn'), stage: 'pe', node: where, title, detail: `That is below the 4,096 budget we have measured. In our Text to Image test the enhancer used ${T2I_USE} tokens for its thinking and the final prompt together. When the budget runs out, the answer stops early, inside the thinking or partway through the prompt.${thinking === true ? ' Thinking is on here, which uses more of the budget.' : ''} The node's default is 512.${offNote}`, fix: `Set max_length to at least 4096, or to ${prof.maxTokens} to match Qwen.`, sources: ['peCore', 'textgen', 'thread4'] });
+      } else if (task === 't2i') {
+        add({ id: 'pe.max-tokens', area: 'pe', status: 'info', stage: 'pe', node: where, title, detail: `In our Text to Image test at 4,096 (ComfyUI 0.38.0, RTX 3090, 2 prompts with fixed seeds), no run reached the cap: thinking plus the final prompt took ${T2I_USE} tokens. If an answer ever stops before the prompt, raise max_length.`, fix: null, sources: ['peCore', 'textgen'] });
+      } else {
+        add({ id: 'pe.max-tokens', area: 'pe', status: 'info', stage: 'pe', node: where, title, detail: 'Not measured here: we have not run the Image Edit enhancer, so we cannot say whether this budget is ever too short.', fix: null, sources: ['peCore', 'textgen'] });
+      }
     }
     const mode = g.value(tg, 'sampling_mode');
     if (mode === 'off') {
@@ -556,7 +569,7 @@ export function check(workflowText, listingText = '', opts = {}) {
     } else if (mode === 'on') {
       const pp = Number(g.value(tg, 'presence_penalty') ?? 0);
       if (Number.isFinite(pp) && Math.abs(pp - prof.presencePenalty) > 1e-6) {
-        add({ id: 'pe.presence', area: 'pe', status: 'info', stage: 'pe', node: where, title: `presence_penalty is ${pp}; Qwen's ${task} setting is ${prof.presencePenalty}`, detail: 'Qwen’s code notes that a wrong penalty does not fail; it quietly changes the output distribution. The official ComfyUI template uses 0.', fix: null, sources: ['peCore'] });
+        add({ id: 'pe.presence', area: 'pe', status: 'info', stage: 'pe', node: where, title: `presence_penalty is ${pp}; Qwen's ${task} setting is ${prof.presencePenalty}`, detail: `Qwen’s code notes that a wrong penalty does not fail; it quietly changes the output distribution.${task === 't2i' ? ' The Text to Image template in templates package 0.11.70 uses 0; the fix merged upstream on 2026-09-30 sets 1.5.' : ''}`, fix: null, sources: task === 't2i' ? ['peCore', 'pr1298'] : ['peCore'] });
       }
     }
 
@@ -649,14 +662,17 @@ function buildSlots(g, loads, peRuns, findings, clipUse) {
 
 // Weights only, from the published file sizes. Activations, latents and the KV cache come on top and are not modelled here.
 export const BUDGETS = [12, 16, 24];
-export const MEASURED = []; // rows from a real run, e.g. { gpu: 'RTX 3090 24 GB', stage: 'pe', peakGiB: 0, tokensPerSec: 0, comfy: '0.38.0', note: '' }
+// Peak job VRAM from a real run (nvidia-smi on the card, 2026-09-30). Everything else stays unmeasured until it is run.
+export const MEASURED = [
+  { stage: 'pe', task: 't2i', what: 'Text-to-image enhancer (PE-T2I) alone', gpu: 'RTX 3090 24 GB', peakMiB: 10566, tokensPerSec: [16.6, 18.9], comfy: '0.38.0', flags: '--gpu-only' },
+];
 function vramPlan(slots, listing) {
   const sizeOf = f => f.bytes ?? listing.files.find(x => x.name.toLowerCase() === String(f.name).toLowerCase())?.bytes ?? null;
   // A stage counts when its loader holds a file of the right role; a file in the wrong slot says nothing about memory.
   const fits = { pe: ['pe'], te: ['te'], dit: ['dit'], vae: ['vae', 'vaeOther'] };
   const stages = slots.filter(s => s.files.length && fits[s.stage].includes(s.files[0].file?.role)).map(s => {
     const b = sizeOf(s.files[0]);
-    return { stage: s.stage, label: s.label, name: s.files[0].name, bytes: b, gib: b ? gib(b) : null, off: s.status === 'dormant' };
+    return { stage: s.stage, label: s.label, name: s.files[0].name, task: s.files[0].file?.task ?? null, bytes: b, gib: b ? gib(b) : null, off: s.status === 'dormant' };
   });
   const known = stages.filter(s => s.gib != null);
   const get = st => known.find(s => s.stage === st);
@@ -666,5 +682,9 @@ function vramPlan(slots, listing) {
     alone: known.map(s => ({ stage: s.stage, fits: s.gib < budget })),
     pairs: pairs.map(p => ({ stages: [p.a.stage, p.b.stage], fits: p.gib < budget, gib: p.gib })),
   }));
-  return { stages, unknown: stages.filter(s => s.gib == null).map(s => s.name), pairs, rows, measured: MEASURED };
+  const measured = MEASURED.filter(m => stages.some(s => s.stage === m.stage && s.task === m.task));
+  const notMeasured = [];
+  if (stages.some(s => s.stage === 'dit')) notMeasured.push('the full graph on a 24 GB card');
+  if (stages.some(s => s.stage === 'pe' && s.task === 'i2i')) notMeasured.push('the edit enhancer (PE-I2I)');
+  return { stages, unknown: stages.filter(s => s.gib == null).map(s => s.name), pairs, rows, measured, notMeasured };
 }

@@ -54,13 +54,14 @@
     <section class="finding" aria-labelledby="finding-title">
       <div class="wrap">
         <div>
-          <p class="label"><b>Found in the official templates</b> · confirmed in ComfyUI 0.38.0, 2026-09-30</p>
-          <h2 id="finding-title">Both Qwen Image 2.1 templates can run the prompt enhancer without its system prompt.</h2>
+          <p class="label"><b>Found in the official templates</b> · package 0.11.70 · ComfyUI 0.38.0</p>
+          <h2 id="finding-title">In templates package 0.11.70, both Qwen Image 2.1 templates can run the prompt enhancer without its system prompt.</h2>
         </div>
         <div class="finding-body">
-          <p><b>Image Edit</b> ships with the enhancer switched on. Its system prompt node is not connected, and Generate Text’s <code>use_default_template</code> is off, so connecting the node alone still drops the prompt.</p>
-          <p><b>Text to Image</b> connects the system prompt, but leaves Generate Text’s <code>use_default_template</code> off. ComfyUI 0.38.0 passes <code>system_prompt</code> only when that setting is on, so the prompt is dropped. The enhancer is off by default, so this starts when you switch it on.</p>
-          <p>We checked what reaches the enhancer: no system prompt, in either template. It still writes a prompt, but a different one. In our Text to Image test it came out 22–39% shorter.</p>
+          <p class="upstream"><span class="label">Status</span> <b>Fixed upstream, not yet released.</b> 0.11.70 is the templates package ComfyUI 0.38.0 installs, and the first with the enhancer in these templates. Comfy Org merged a fix on 2026-09-30 (<a href="https://github.com/Comfy-Org/workflow_templates/pull/1298" rel="noopener noreferrer">workflow_templates PR #1298</a>); as of 2026-09-30 no released package contains it. With a newer templates package, a freshly opened official template should get no system-prompt flag here. A workflow you saved from 0.11.70 keeps its old wiring, so check it anyway.</p>
+          <p><b>Image Edit</b> in 0.11.70 has the enhancer switched on. Its system prompt node is not connected, and Generate Text’s <code>use_default_template</code> is off, so connecting the node alone still drops the prompt.</p>
+          <p><b>Text to Image</b> in 0.11.70 connects the system prompt, but leaves Generate Text’s <code>use_default_template</code> off. ComfyUI 0.38.0 passes <code>system_prompt</code> only when that setting is on, so the prompt is dropped. The enhancer is off by default, so this starts when you switch it on.</p>
+          <p>We checked what reaches the enhancer in ComfyUI 0.38.0 on 2026-09-30: no system prompt, in either template. It still writes a prompt, but a different one. In our Text to Image test it came out 22–39% shorter.</p>
           <p class="fix-line"><span class="label">Fix</span> <b>Image Edit:</b> connect the system prompt node to <code>system_prompt</code> and turn <code>use_default_template</code> on.<br><b>Text to Image:</b> turn <code>use_default_template</code> on and delete the <code>&lt;|im_start|&gt;system</code> / <code>&lt;|im_end|&gt;</code> wrapper from the text. The check below finds each step.</p>
         </div>
       </div>
@@ -93,7 +94,7 @@
             <p class="form-error" id="form-error" role="alert" hidden></p>
             <div class="submit-row">
               <button class="btn btn-primary" type="submit">Check workflow</button>
-              <button class="btn btn-quiet" type="button" id="example">Try the official Image Edit template</button>
+              <button class="btn btn-quiet" type="button" id="example">Try the Image Edit template from 0.11.70</button>
             </div>
           </form>
 
@@ -101,7 +102,7 @@
             <p class="verdict empty" id="verdict">Your result appears here: a fix list, the four slots as your workflow fills them, a VRAM plan and everything that passed.</p>
             <ol class="slots" id="slots" hidden></ol>
             <div id="fixes-wrap" hidden><h3 class="result-h">Fix before you run</h3><ol class="fixes" id="fixes"></ol></div>
-            <div id="vram-wrap" hidden><h3 class="result-h">VRAM plan <span class="hint">· weights only</span></h3><div class="vram" id="vram"></div></div>
+            <div id="vram-wrap" hidden><h3 class="result-h">VRAM plan <span class="hint">· weights, and what we measured</span></h3><div class="vram" id="vram"></div></div>
             <div id="notes-wrap" hidden><h3 class="result-h">Notes</h3><ol class="fixes notes" id="notes"></ol></div>
             <div id="passes-wrap" hidden><h3 class="result-h">Checked and fine</h3><ul class="passes" id="passes"></ul></div>
           </section>
@@ -123,7 +124,7 @@
             <li>Which version of a custom node pack you installed.</li>
             <li>Image quality, garbled text inside images, or speed.</li>
           </ul>
-          <p class="after-list">We tested it on 17 problems reported in public threads, each rebuilt from the official templates. It catches the 12 that live in the workflow or file names. It misses the 5 that come from launch flags, hardware or runtime.</p>
+          <p class="after-list">We tested it on 17 problems reported in public threads, each rebuilt from the official templates. It catches the 12 that live in the workflow or file names. It misses the 5 that come from launch flags, hardware or runtime. Real exports from ComfyUI 0.38.0 get the same result as the template files they came from.</p>
         </div>
       </div>
     </section>
@@ -132,7 +133,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <p>An independent free tool by CyberNative. Not affiliated with Qwen, Alibaba Cloud or Comfy Org.</p>
-      <p class="muted">Rules come from the Comfy-Org and Qwen model repositories, the official ComfyUI templates, and the ComfyUI source at v0.37.0 and v0.38.0. Each result links to its source. The example template is from Comfy-Org/workflow_templates, used under the <a href="fixtures/official/LICENSE.txt">MIT License, © Comfy Org</a>.</p>
+      <p class="muted">Rules come from the Comfy-Org and Qwen model repositories, the official ComfyUI templates, and the ComfyUI source at v0.37.0 and v0.38.0. Each result links to its source. The example and test templates are from Comfy-Org/workflow_templates, used under the <a href="fixtures/official/LICENSE.txt">MIT License, © Comfy Org</a>.</p>
     </div>
   </footer>
   <script type="module" src="page.js"></script>

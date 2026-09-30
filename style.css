@@ -95,6 +95,8 @@ code { font-size: 0.9375em; overflow-wrap: anywhere; }
 .finding-body { display: grid; gap: var(--wp-4); max-width: 40em; }
 .fix-line { border-left: 2px solid var(--wp-ink); padding-left: var(--wp-4); }
 .fix-line .label, .fix-do .label { color: var(--wp-ink); margin-right: .35em; }
+.upstream { border-left: 2px solid var(--wp-rust); padding-left: var(--wp-4); }
+.upstream .label { color: var(--wp-rust); margin-right: .35em; }
 
 /* the tool */
 .tool-head { display: grid; gap: var(--wp-3); margin-bottom: var(--wp-8); }
@@ -183,6 +185,10 @@ input:focus-visible, textarea:focus-visible { outline-offset: 1px; }
 .fit.no { background: var(--wp-flag); outline: 1px solid var(--wp-rust); }
 .fit.unknown { color: var(--wp-muted); }
 .vram-note { margin-top: var(--wp-3); font-size: var(--wp-text-meta); line-height: 1.5; }
+.measured { margin-top: var(--wp-4); padding-top: var(--wp-3); border-top: 1px solid var(--wp-hair); }
+.measured ul { list-style: none; margin: var(--wp-2) 0 0; padding: 0; font-size: 0.9375rem; line-height: 1.5; }
+.measured code { white-space: nowrap; }
+.measured .hint { margin-top: var(--wp-2); font-size: var(--wp-text-meta); line-height: 1.5; }
 
 .passes { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--wp-hair); }
 .passes li { padding: var(--wp-2) 0; border-bottom: 1px solid var(--wp-hair); display: flex; gap: var(--wp-2); align-items: baseline; }
@@ -217,7 +223,7 @@ input:focus-visible, textarea:focus-visible { outline-offset: 1px; }
   .vram .num-col { width: 3.25rem; }
   .submit-row .btn, .actions .btn { width: 100%; }
   .result, .rack-figure { padding: var(--wp-4); }
-  .terms, .rack-figure figcaption, .bay-to, .slot-node, .src summary, .vram caption, .vram-note, .site-footer .muted, .step legend .hint { font-size: 1rem; }
+  .terms, .rack-figure figcaption, .bay-to, .slot-node, .src summary, .vram caption, .vram-note, .measured .hint, .site-footer .muted, .step legend .hint { font-size: 1rem; }
   .bay-body code, .slot-file, .v-sub, .where { font-size: 0.875rem; }
   .fit { padding: 3px 4px; }
   .vram th, .vram td { padding-right: 4px; }

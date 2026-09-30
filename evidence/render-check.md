@@ -82,3 +82,9 @@ MECHANICAL LAYOUT PASS: no flags; full technical and creative verdicts remain se
 ```
 ## Focus ring
 32 stops across both states and both viewports, 0 flagged (5.41:1 on paper, 5.95:1 on panel).
+
+## Revision 1 (version-bounded template finding, upstream-fixed controls, measured row)
+Loopback static serve, Chrome, 2026-09-30.
+- design-measure.mjs on `.finding`, `.limits` and `.site-footer` at 390x844 and 1440x900: **MECHANICAL LAYOUT PASS**, no flags. A first run flagged the section label at 13px once it passed 40 characters. The label was shortened, and the date moved into the evidence sentence.
+- Result panel with the repaired Text to Image workflow and a folder listing, then the bundled 0.11.70 Image Edit example, at 390 and 1440: 0 px horizontal overflow, 0 console errors. The status box, the measured line and the not-measured line render at 16px at 390. `--gpu-only` sits in a no-wrap `code` element, because it broke at its hyphen at 390.
+- Renders: `renders/rev1-finding-390.png`, `rev1-finding-1440.png`, `rev1-vram-t2i-390.png`, `rev1-vram-t2i-1440.png`, `rev1-example-390.png`.

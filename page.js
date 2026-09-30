@@ -1,4 +1,4 @@
-import { check, SOURCES, BUDGETS } from './engine.js';
+import { check, SOURCES, BUDGETS, gib } from './engine.js';
 
 const byId = id => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
@@ -37,7 +37,7 @@ window.addEventListener('drop', e => { if (!drop.contains(e.target)) { e.prevent
 byId('example').addEventListener('click', async () => {
   const { OFFICIAL_IMAGE_EDIT } = await import('./example.js');
   workflow.value = OFFICIAL_IMAGE_EDIT;
-  fileStatus.textContent = 'Loaded the official Image Edit template as Comfy-Org ships it (read 2026-09-29).';
+  fileStatus.textContent = 'Loaded the official Image Edit template as templates package 0.11.70 wires it.';
   run();
 });
 
@@ -165,6 +165,21 @@ function renderVram(v) {
   wrap.append(table);
   const note = el('p', 'hint vram-note', `Weights only, in GiB (1024³ bytes, the unit card memory is sold in). Activations, latents and the enhancer's KV cache need more on top. When two stages are “over” together, ComfyUI moves one out of VRAM between them.${v.unknown.length ? ` No published size for ${v.unknown.join(', ')}: paste an ls -l listing to include it.` : ''}`);
   wrap.append(note);
+  if (v.measured.length || v.notMeasured.length) {
+    const m = el('div', 'measured');
+    m.append(el('p', 'label', 'On a real card'));
+    if (v.measured.length) {
+      const ul = el('ul');
+      for (const r of v.measured) {
+        const li = el('li');
+        li.append(el('b', null, `${r.what}: peak ${r.peakMiB.toLocaleString('en-US')} MiB`), document.createTextNode(` (${gib(r.peakMiB * 1048576).toFixed(1)} GiB), ${r.tokensPerSec.join('–')} tokens/s. ${r.gpu}, ComfyUI ${r.comfy} with `), el('code', null, r.flags), document.createTextNode('.'));
+        ul.append(li);
+      }
+      m.append(ul);
+    }
+    if (v.notMeasured.length) m.append(el('p', 'hint', `Not measured yet: ${v.notMeasured.join('; ')}.`));
+    wrap.append(m);
+  }
   if (!known.length && !v.unknown.length) return;
   byId('vram-wrap').hidden = false;
 }

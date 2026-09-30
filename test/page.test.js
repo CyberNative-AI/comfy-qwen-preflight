@@ -62,12 +62,14 @@ test('a dropped file with the PE in the text-encoder slot is caught, and nothing
 test('an API-format export with a folder listing checks clean at 390 px', async () => {
   const { page, errors } = await open(390);
   await page.fill('#workflow', JSON.stringify(toApi(t2iRepaired())));
-  await page.fill('#listing', CONTROLS.at(-1).listing);
+  await page.fill('#listing', CONTROLS.find(c => c.listing).listing);
   await page.click('button[type=submit]');
   await page.waitForSelector('#slots:not([hidden])');
   assert.match(await page.textContent('#verdict'), /Nothing to fix/);
   assert.match(await page.textContent('#verdict'), /API-format/);
   assert.match(await page.textContent('#passes'), /ComfyUI 0\.38\.0 has every core node/);
+  assert.match(await page.textContent('#vram'), /PE-T2I\) alone: peak 10,566 MiB \(10\.3 GiB\), 16\.6–18\.9 tokens\/s\. RTX 3090 24 GB, ComfyUI 0\.38\.0 with --gpu-only/);
+  assert.match(await page.textContent('#vram'), /Not measured yet: the full graph on a 24 GB card\./);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
   assert.deepEqual(errors, []);
   await page.close();
@@ -78,7 +80,25 @@ test('the bundled official Image Edit template shows its unconnected system prom
   await page.click('#example');
   await page.waitForSelector('#slots:not([hidden])');
   assert.match(await page.textContent('#fixes'), /The edit PE runs without its system prompt/);
+  assert.doesNotMatch(await page.textContent('#fixes'), /max_length/);
+  assert.match(await page.textContent('#notes'), /max_length is 16256; Qwen's runner uses 24,000.*Not measured here/);
+  assert.match(await page.textContent('#file-status'), /templates package 0\.11\.70/);
   assert.ok(await page.isVisible('#vram-wrap'));
+  assert.doesNotMatch(await page.textContent('#vram'), /peak/);
+  assert.match(await page.textContent('#vram'), /Not measured yet: the full graph on a 24 GB card; the edit enhancer \(PE-I2I\)\./);
+  await page.close();
+});
+
+test('the upstream-fixed Image Edit template, PE switched on, has nothing to fix', async () => {
+  const { page, errors } = await open(390);
+  await page.fill('#workflow', CONTROLS.find(c => /Image Edit template \(fixed, unreleased\), PE switched on/.test(c.name)).workflow());
+  await page.click('button[type=submit]');
+  await page.waitForSelector('#slots:not([hidden])');
+  assert.match(await page.textContent('#verdict'), /Nothing to fix/);
+  assert.ok(await page.isHidden('#fixes-wrap'));
+  assert.match(await page.textContent('#notes'), /max_length is 4096; Qwen's runner uses 24,000/);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
+  assert.deepEqual(errors, []);
   await page.close();
 });
 
