@@ -19,6 +19,6 @@ Each rule cites its primary source in `engine.js` (`SOURCES`): the Comfy-Org and
 
 `npm test` rewrites `evidence/labeled-report.md`. The report covers 17 problems reported in public threads, each rebuilt as an edit of an official Comfy-Org template, plus 5 clean controls and 9 rules documented in source code.
 
-`fixtures/official/` holds the Comfy-Org Qwen Image 2.1 templates (MIT, Comfy-Org/workflow_templates at e7cd011d4d). `example.js` bundles the Image Edit template, so the page needs no network access (rebuild it with `node tools/build-example.mjs`).
+`fixtures/official/` holds the Comfy-Org Qwen Image 2.1 templates from Comfy-Org/workflow_templates at e7cd011d4d, copyright (c) 2023-present Comfy Org, under the MIT License. Its full text is in [`fixtures/official/LICENSE.txt`](fixtures/official/LICENSE.txt). `example.js` bundles the Image Edit template with that notice, so the page needs no network access (rebuild it with `node tools/build-example.mjs`).
 
 Not affiliated with Qwen, Alibaba Cloud or Comfy Org.
