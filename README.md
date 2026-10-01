@@ -24,7 +24,7 @@ Each rule cites its primary source in `engine.js` (`SOURCES`): the Comfy-Org and
 `fixtures/official/` holds Comfy-Org Qwen Image 2.1 templates from Comfy-Org/workflow_templates, copyright (c) 2023-present Comfy Org, under the MIT License. Its full text is in [`fixtures/official/LICENSE.txt`](fixtures/official/LICENSE.txt), and it covers every file below:
 
 - the top-level templates, at e7cd011d4d. Their PE wiring is what templates package 0.11.70 ships, the version ComfyUI 0.38.0 installs;
-- `main-aec2197f/`: Text to Image and Image Edit on upstream main after the 2026-09-30 fix ([PR #1298](https://github.com/Comfy-Org/workflow_templates/pull/1298)), which no released package contained when this was written;
+- `main-aec2197f/`: Text to Image and Image Edit on upstream main after the 2026-09-30 fix ([PR #1298](https://github.com/Comfy-Org/workflow_templates/pull/1298)), whose two template files are byte-identical to the JSON files released with templates package 0.11.73 (checked 2026-10-01);
 - `exports-comfyui-0.38.0/`: those 0.11.70 templates as exported from a real ComfyUI 0.38.0: UI round-trips, Export (API) files and the graphs actually queued, untouched apart from the repairs their names describe.
 
 `example.js` bundles the Image Edit template with that notice, so the page needs no network access (rebuild it with `node tools/build-example.mjs`).
