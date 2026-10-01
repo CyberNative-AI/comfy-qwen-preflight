@@ -1,4 +1,6 @@
-# Catch a Qwen-Image 2.1 file in the wrong loader
+# Qwen-Image 2.1 in ComfyUI: catch the prompt enhancer in the text-encoder slot
+
+Checked September 30, 2026. Scope: checker revision `fc84daaf201c2826fb15c4c35e21c97cff748d7d`; example ComfyUI version `0.38.0`. Try the [free workflow checker](https://cybernative-ai.github.io/comfy-qwen-preflight/#check).
 
 The prompt enhancer and text encoder can live in the same folder and use the same loader node. Their destinations differ: the enhancer feeds Generate Text; the text encoder feeds Text Encode Qwen Image 2.1. The [Comfy Org file guide](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) identifies the PE files and encoder files separately.
 
@@ -54,5 +56,18 @@ The checker processes these files in the browser. In our September 30, 2026 rehe
 If choosing a file does nothing, paste its JSON into **Workflow JSON** and press **Check workflow**. Invalid JSON is an input error, not a clean result. Model filenames must match what is installed; a configuration check does not download or inspect the model weights.
 
 This recipe pins checker revision `fc84daa` and uses ComfyUI `0.38.0` as its example. It makes no claim about today's template package. The templates' original MIT notice is retained in [fixtures/official/LICENSE.txt](https://github.com/CyberNative-AI/comfy-qwen-preflight/blob/fc84daaf201c2826fb15c4c35e21c97cff748d7d/fixtures/official/LICENSE.txt). Checker code and documentation are [MIT licensed](https://github.com/CyberNative-AI/comfy-qwen-preflight/blob/fc84daaf201c2826fb15c4c35e21c97cff748d7d/LICENSE).
+
+## Related primary documentation
+
+- [Comfy Org Qwen-Image 2.1 model card](https://huggingface.co/Comfy-Org/Qwen-Image-2.1): prompt-enhancer files and model folders.
+- [Official Qwen-Image-2.1 ComfyUI native workflow guide](https://docs.comfy.org/tutorials/image/qwen/qwen-image-2-1): workflow examples, model links and prompt-enhancement settings.
+
+These are related references, not a guarantee that a workflow will run or a fix for every failure.
+
+## Optional corrections and feedback
+
+If you want to report a correction or a checker result, use the [public repository issues](https://github.com/CyberNative-AI/comfy-qwen-preflight/issues) or email [hello@cybernative.ai](mailto:hello@cybernative.ai). Feedback is voluntary. Include the rule name (for example, `files.pe-in-encoder`), your ComfyUI version, what you expected and what you observed, and a minimal synthetic reproduction only.
+
+Do not share private workflows, prompts, logs, paths, identities or model files. Use invented data in the reproduction, and include only what is needed to show the result.
 
 An independent tool by CyberNative AI LLC; not affiliated with Qwen, Alibaba Cloud or Comfy Org. Corrections: hello@cybernative.ai.
