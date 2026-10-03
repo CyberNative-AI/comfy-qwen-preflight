@@ -19,7 +19,14 @@ Each rule cites its primary source in `engine.js` (`SOURCES`): the Comfy-Org and
     python3 -m http.server 8000   # then open http://127.0.0.1:8000/
     npm install && npm test        # engine, labeled set and browser tests (Playwright, Chrome)
 
-`npm test` rewrites `evidence/labeled-report.md`. The report covers 17 problems reported in public threads, each rebuilt as an edit of an official Comfy-Org template, plus 13 clean controls, 4 labelled real exports and 10 rules documented in source code.
+`npm test` preserves the accepted `evidence/labeled-report.md`, even for filtered or failed runs. The historical report covers 17 problems reported in public threads, each rebuilt as an edit of an official Comfy-Org template, plus 13 clean controls, 4 labelled real exports and 10 rules documented in source code.
+
+To generate a candidate, choose an explicit output in an existing scratch directory outside this repository:
+
+    report_dir=$(mktemp -d)
+    npm run report:labeled -- --output "$report_dir/labeled-report.md"
+
+Generation checks all declared case identities and categories, the existing assertions, clean controls, export parity and cross-case invariants before writing. An incomplete, duplicate or failing set exits nonzero and leaves the output unchanged (or absent). Repository paths and symbolic links are rejected. A successful candidate includes all 17 reported cases (the five legitimate misses remain misses), 13 controls, 4 exports and 10 documented cases. It does not replace the dated accepted evidence; review a candidate before promoting it.
 
 `fixtures/official/` holds Comfy-Org Qwen Image 2.1 templates from Comfy-Org/workflow_templates, copyright (c) 2023-present Comfy Org, under the MIT License. Its full text is in [`fixtures/official/LICENSE.txt`](fixtures/official/LICENSE.txt), and it covers every file below:
 
