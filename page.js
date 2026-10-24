@@ -38,17 +38,21 @@ byId('example').addEventListener('click', async () => {
   const { OFFICIAL_IMAGE_EDIT } = await import('./example.js');
   workflow.value = OFFICIAL_IMAGE_EDIT;
   fileStatus.textContent = 'Loaded the official Image Edit template as templates package 0.11.70 wires it.';
-  run();
+  run(true);
 });
+// Editing the box after the example makes it the reader's own workflow.
+let exampleLoaded = false;
+workflow.addEventListener('input', () => { exampleLoaded = false; });
 
-form.addEventListener('submit', e => { e.preventDefault(); run(); });
+form.addEventListener('submit', e => { e.preventDefault(); run(exampleLoaded); });
 
-function run() {
+function run(example = false) {
   clearError();
+  exampleLoaded = example;
   const text = workflow.value.trim();
   if (!text) { showError('Drop, choose or paste a workflow first.'); workflow.focus(); return; }
   const r = check(text, byId('listing').value, { version: byId('version').value.trim() });
-  render(r);
+  render(r, example);
 }
 
 function sourcesDetails(keys) {
@@ -74,10 +78,16 @@ function findingItem(f) {
   return li;
 }
 
-// The four modules of the drawing are the slot readout. Before a check, and when nothing could be checked,
-// they say "Not checked" and keep the file each slot expects.
+// The four modules of the drawing are the slot readout. The page opens on the bundled example's result (the static
+// markup is what render() draws for it, checked by test/page.test.js). When nothing could be checked, they say
+// "Not checked" and keep the file each slot expects.
 const modules = [...byId('slots').children];
-const expected = modules.map(li => [li.querySelector('.m-file').textContent, li.querySelector('.m-node').textContent]);
+const expected = [
+  ['qwen3.5_9b_qwen_image_2.1_pe_t2i / _pe_i2i', 'CLIPLoader → Generate Text'],
+  ['qwen3vl_8b_int8_convrot · bf16 · w4a8', 'CLIPLoader, type qwen_image → Text Encode Qwen Image 2.1'],
+  ['qwen_image_2.1_int8_convrot · bf16 · .gguf', 'Load Diffusion Model · GGUF: Unet Loader (GGUF)'],
+  ['qwen_image_2.1_vae_bf16', 'Load VAE'],
+];
 
 function setModule(li, status, files, emptyText) {
   li.className = li.className.replace(/\b(idle|pass|fail|dormant|warn|absent|missing)\b/g, '').trim() + ' ' + status;
@@ -88,12 +98,17 @@ function setModule(li, status, files, emptyText) {
   if (!files.length && emptyText) text.append(el('span', 'm-node', emptyText));
 }
 
-function resetModules(reason) {
-  modules.forEach((li, i) => setModule(li, 'idle', [expected[i]]));
-  byId('assembly-state').textContent = reason;
+function setCaption(whose, state) {
+  byId('assembly-whose').textContent = whose;
+  byId('assembly-state').textContent = state;
 }
 
-function render(r) {
+function resetModules(reason) {
+  modules.forEach((li, i) => setModule(li, 'idle', [expected[i]]));
+  setCaption('Your workflow', reason);
+}
+
+function render(r, example = false) {
   // The static example result above the form gives way to a real one.
   byId('sample-result').hidden = true;
   const verdict = byId('verdict');
@@ -126,7 +141,9 @@ function render(r) {
 
   // Slots, lit on the drawing in its order: enhancer, text encoder, diffusion model, VAE.
   r.slots.forEach((s, i) => setModule(modules[i], s.status, s.files.map(f => [f.name, f.node]), s.optional ? 'Not in this workflow' : 'No loader found'));
-  byId('assembly-state').textContent = 'as your workflow fills them · ' + (fail || !dormant ? `${fail} to fix` : `${dormant} when switched on`);
+  const count = fail || !dormant ? `${fail} to fix` : `${dormant} when switched on`;
+  if (example) setCaption('Example', `official template · ${count}`);
+  else setCaption('Your workflow', count);
 
   const alarms = r.findings.filter(f => ['fail', 'dormant', 'warn'].includes(f.status));
   const notes = r.findings.filter(f => f.status === 'info');

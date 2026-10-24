@@ -88,12 +88,16 @@ code { font-size: 0.9375em; overflow-wrap: anywhere; }
 .bench-copy h1 { max-width: 13em; }
 .lede { font-size: var(--wp-text-lede); line-height: 1.5; max-width: 36em; }
 /* Byline under the headline: who made the tool. */
-.maker { margin-top: calc(-1 * var(--wp-2)); font-size: var(--wp-text-meta); font-weight: 500; }
-/* The byline link is inline: padding grows its hit area to 48 px on each line, and the matching negative inline margin
-   keeps the text and its wrapping where they were. The focus ring is pulled back to 2 px around the text so it stays
-   clear of the h1 and the lede. */
-.maker a { padding: 15px; margin-inline: -15px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.maker { display: flex; flex-wrap: wrap; align-items: flex-start; margin: calc(-1 * var(--wp-2) - 15px) 0 -15px; font-size: var(--wp-text-meta); font-weight: 500; }
+/* Two byline links, each a flex item: 15 px padding makes each box 48 px or more on its own row, and the matching
+   negative margins keep the text where it was. When the line is too narrow the second link moves to its own row,
+   whole. The focus ring is pulled back to 2 px around the text so it stays clear of the h1 and the lede. */
+.maker a { padding: 15px; margin-inline: -15px; }
 .maker a:focus-visible { outline-offset: -13px; }
+.maker-more { display: flex; align-items: center; white-space: nowrap; }
+.maker-sep { margin-inline: 0.5em; }
+/* Below 480 px the line cannot hold both links: the second takes its own row, without the separator. */
+@media (max-width: 480px) { .maker-more { flex-basis: 100%; } .maker-sep { display: none; } }
 /* A static sample of the bundled example's real output. Tagged and lighter than the 2 px result card so it never
    reads as the visitor's own result; page.js hides it once a real result renders. Solid, because on this page a
    dashed border means "drop here", and as wide as the drop zone under it. */
@@ -339,6 +343,8 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
   .finding, .limits { padding: var(--wp-12) 0; }
 }
 @media (max-width: 600px) {
+  /* Both actions on the first screen at 390 x 844, under the two-row byline. */
+  .bench { padding-top: var(--wp-6); }
   .site-header .wrap { min-height: 64px; gap: var(--wp-3); }
   .wordmark { font-size: 1.3125rem; }
   .brand-link img { width: 30px; height: 30px; }

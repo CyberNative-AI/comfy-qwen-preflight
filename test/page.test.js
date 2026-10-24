@@ -1,5 +1,6 @@
 // End-to-end in a real browser: the page checks a real exported file, sends nothing anywhere, and handles bad input.
-// The four modules of the drawing (#slots) are the slot readout: idle "Not checked" until a check runs.
+// The four modules of the drawing (#slots) are the slot readout: the page opens on the bundled example's result, and a
+// reader's own workflow replaces it. #verdict loses .empty once a check has rendered.
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdtemp } from 'node:fs/promises';
@@ -50,7 +51,7 @@ test('a dropped file with the PE in the text-encoder slot is caught, and nothing
   const fetchBlocked = await page.evaluate(() => fetch('https://example.com/').then(() => false, () => true));
   assert.ok(fetchBlocked, 'the security policy blocks network requests');
   await page.setInputFiles('#file', file);
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   assert.match(await page.textContent('#verdict'), /1 thing to fix/);
   assert.match(await page.textContent('#fixes'), /The prompt enhancer is in the text-encoder slot/);
   assert.match(await page.textContent('#file-status'), /my_workflow\.json/);
@@ -66,7 +67,7 @@ test('an API-format export with a folder listing checks clean at 390 px', async 
   await page.click('#optional summary');
   await page.fill('#listing', CONTROLS.find(c => c.listing).listing);
   await page.click('button[type=submit]');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   assert.match(await page.textContent('#verdict'), /Nothing to fix/);
   assert.match(await page.textContent('#verdict'), /API-format/);
   assert.match(await page.textContent('#passes'), /ComfyUI 0\.38\.0 has every core node/);
@@ -80,7 +81,7 @@ test('an API-format export with a folder listing checks clean at 390 px', async 
 test('the bundled official Image Edit template shows its unconnected system prompt', async () => {
   const { page } = await open();
   await page.click('#example');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   assert.match(await page.textContent('#fixes'), /The edit PE runs without its system prompt/);
   assert.doesNotMatch(await page.textContent('#fixes'), /max_length/);
   assert.match(await page.textContent('#notes'), /max_length is 16256; Qwen's runner uses 24,000.*Not measured here/);
@@ -95,7 +96,7 @@ test('the upstream-fixed Image Edit template, PE switched on, has nothing to fix
   const { page, errors } = await open(390);
   await page.fill('#workflow', CONTROLS.find(c => /Image Edit template \(fixed, unreleased\), PE switched on/.test(c.name)).workflow());
   await page.click('button[type=submit]');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   assert.match(await page.textContent('#verdict'), /Nothing to fix/);
   assert.ok(await page.isHidden('#fixes-wrap'));
   assert.match(await page.textContent('#notes'), /max_length is 4096; Qwen's runner uses 24,000/);
@@ -127,7 +128,7 @@ test('workflow text is rendered as text, never as markup', async () => {
   wf.definitions.subgraphs[0].nodes.find(n => n.id === 453).title = '<img src=x onerror="window.__pwned=1">';
   await page.fill('#workflow', JSON.stringify(wf));
   await page.click('button[type=submit]');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   assert.equal(await page.evaluate(() => window.__pwned), undefined);
   assert.match(await page.textContent('#fixes'), /<img src=x/);
   await page.close();
@@ -154,16 +155,16 @@ async function check(page, text) { await page.fill('#workflow', text); await pag
 
 test('(a) the built-in broken example lights the enhancer and gives both repair steps', async () => {
   const { page, errors } = await open(390);
-  assert.deepEqual(await moduleStates(page), ['pe:idle:Not checked', 'te:idle:Not checked', 'dit:idle:Not checked', 'vae:idle:Not checked']);
+  assert.deepEqual(await moduleStates(page), ['pe:fail:Fix', 'te:pass:Fine', 'dit:pass:Fine', 'vae:pass:Fine'], 'the page opens on the example');
   await page.click('#example');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   assert.deepEqual(await moduleStates(page), ['pe:fail:Fix', 'te:pass:Fine', 'dit:pass:Fine', 'vae:pass:Fine']);
   assert.match(await page.textContent('#verdict'), /^1 thing to fix before you run this\./);
   const fix = await page.textContent('#fixes');
   assert.match(fix, /The edit PE runs without its system prompt/);
   assert.match(fix, /system_prompt/);
   assert.match(fix, /use_default_template/);
-  assert.match(await page.textContent('#assembly-state'), /^as your workflow fills them · 1 to fix$/);
+  assert.equal(await page.textContent('#assembly-caption'), 'Example · official template · 1 to fix');
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -171,12 +172,12 @@ test('(a) the built-in broken example lights the enhancer and gives both repair 
 test('(b) connecting the system prompt and turning use_default_template on clears the failure; (c) connecting alone does not', async () => {
   const { page, errors } = await open();
   await page.click('#example');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   const example = await page.inputValue('#workflow');
   await check(page, repairExample(example, { connect: true, template: true }));
   assert.match(await page.textContent('#verdict'), /^Nothing to fix in what this page can check\./);
   assert.ok(await page.isHidden('#fixes-wrap'));
-  assert.match(await page.textContent('#assembly-state'), /^as your workflow fills them · 0 to fix$/);
+  assert.equal(await page.textContent('#assembly-caption'), 'Your workflow · 0 to fix', 'an edited example is the reader\'s own workflow');
   assert.equal(await page.$eval('#slots .m-pe', li => li.className.includes('pass')), true);
   assert.match(await page.textContent('#passes'), /system prompt/i);
   await check(page, repairExample(example, { connect: true, template: false }));
@@ -195,7 +196,7 @@ test('(b) connecting the system prompt and turning use_default_template on clear
 test('(d) malformed JSON and a non-Qwen workflow leave every module "Not checked", never "Fine"', async () => {
   const { page, errors } = await open(390);
   await page.click('#example');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   await check(page, '{"nodes": [');
   assert.match(await page.textContent('#verdict'), /not valid JSON/);
   assert.deepEqual((await moduleStates(page)).map(s => s.split(':').slice(1).join(':')), Array(4).fill('idle:Not checked'));
@@ -215,7 +216,7 @@ test('(e) listing and version findings stay separate from the wiring fix', async
   // Everything the example loads except its VAE.
   await page.fill('#listing', 'models/text_encoders/qwen3vl_8b_int8_convrot.safetensors\nmodels/diffusion_models/qwen_image_2.1_int8_convrot.safetensors\nmodels/text_encoders/qwen3.5_9b_qwen_image_2.1_pe_i2i.int8_convrot.safetensors');
   await page.click('#example');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   const titles = () => page.$$eval('#fixes > li', lis => lis.map(li => li.querySelector('.fix-title').textContent));
   let items = await titles();
   assert.equal(items.filter(t => /The edit PE runs without its system prompt/.test(t)).length, 1, 'the wiring fix is its own item');
@@ -236,7 +237,7 @@ test('(f) file, paste and example routes make no request after load', async () =
   const after = [];
   page.on('request', r => after.push(r.url()));
   await page.click('#example');
-  await page.waitForSelector('#slots .slot:not(.idle)');
+  await page.waitForSelector('#verdict:not(.empty)');
   const dir = await mkdtemp(join(tmpdir(), 'qwen-preflight-'));
   const file = join(dir, 'broken.api.json');
   await writeFile(file, await fixture('broken.api.json'));
@@ -273,7 +274,7 @@ test('320, 390 and 1440 renders have no horizontal overflow before or after a ch
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width, `${path} at ${width}`);
     if (path === '/') {
       await page.click('#example');
-      await page.waitForSelector('#slots .slot:not(.idle)');
+      await page.waitForSelector('#verdict:not(.empty)');
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width, `result at ${width}`);
     }
     assert.deepEqual(errors, []);
@@ -318,9 +319,12 @@ test('first screen: an example result, the maker and a 48 px upload target; the 
     const bottom = sel => page.evaluate(s => document.querySelector(s).getBoundingClientRect().bottom, sel);
     assert.ok(await bottom('#sample-result') <= vh, `${width}: sample ends at ${await bottom('#sample-result')}`);
     assert.ok(await bottom('.maker') <= vh, 'maker line on the first screen');
-    assert.ok(await bottom('label.file-btn') <= vh, 'upload button on the first screen');
+    assert.ok(await bottom('#example') <= vh, 'example button on the first screen');
+    assert.ok(await bottom('label.file-btn') <= vh, `${width}: upload button ends at ${await bottom('label.file-btn')}`);
     assert.equal(await page.textContent('.maker a'), 'Made by CyberNative AI LLC, an AI-run company');
     assert.equal(await page.getAttribute('.maker a', 'href'), 'https://cybernative.ai/about/');
+    assert.equal(await page.getAttribute('.maker a.maker-check', 'href'), 'https://cybernative.ai/about/#how-we-check');
+    assert.equal((await page.textContent('.maker')).replace(/\s+/g, ' ').trim(), 'Made by CyberNative AI LLC, an AI-run company·How we check', 'Content\'s words, verbatim');
     const target = await page.locator('#file').boundingBox();
     assert.ok(target.height >= 48, `upload target is ${target.height} px tall`);
     assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.local-badge'), '::before').content), 'none', 'no status dot');
@@ -334,19 +338,21 @@ test('first screen: an example result, the maker and a 48 px upload target; the 
   }
 });
 
-test('48 px byline on every line; the example is solid-bordered and as wide as the drop zone under it', async () => {
+test('48 px for each byline link, the second never split; the example is solid-bordered and as wide as the drop zone', async () => {
   for (const width of [320, 390, 1440]) {
     const { page, errors } = await open(width);
     await page.evaluate(() => document.fonts.ready);
-    const lines = await page.evaluate(() => {
-      const a = document.querySelector('.maker a');
-      return [...a.getClientRects()].map(r => {
+    const links = await page.evaluate(() => [...document.querySelectorAll('.maker a')].map(a => {
+      const rects = [...a.getClientRects()];
+      const range = document.createRange(); range.selectNodeContents(a);
+      return { text: a.textContent, lines: new Set([...range.getClientRects()].map(r => Math.round(r.top))).size, boxes: rects.map(r => {
         const hits = y => { const e = document.elementFromPoint(r.left + Math.min(r.width / 2, 40), y); return !!e && a.contains(e); };
         return { height: r.height, top: hits(r.top + 1), bottom: hits(r.bottom - 1) };
-      });
-    });
-    if (width === 320) assert.equal(lines.length, 2, 'the byline wraps at 320');
-    for (const line of lines) assert.ok(line.height >= 48 && line.top && line.bottom, `${width}: ${JSON.stringify(line)}`);
+      }) };
+    }));
+    assert.equal(links.length, 2);
+    for (const link of links) for (const box of link.boxes) assert.ok(box.height >= 48 && box.top && box.bottom, `${width}: ${link.text} ${JSON.stringify(box)}`);
+    assert.equal(links[1].lines, 1, `${width}: the second link is never split`);
     // A dashed border on this page means "drop here": the example must not look like a second drop target.
     const [sample, drop] = await page.evaluate(() => ['#sample-result', '.drop'].map(s => {
       const e = document.querySelector(s), r = e.getBoundingClientRect();
@@ -372,7 +378,7 @@ test('the example result gives way to a real result: after "Try the example" and
       await writeFile(file, REPORTED.find(c => c.id === 'R1').workflow());
       await page.setInputFiles('#file', file);
     }
-    await page.waitForSelector('#slots .slot:not(.idle)');
+    await page.waitForSelector('#verdict:not(.empty)');
     assert.equal(await page.isVisible('#sample-result'), false, route);
     assert.deepEqual(errors, []);
     await page.close();
@@ -390,7 +396,7 @@ test('keyboard: the actions come first and every stop shows a focus ring', async
     }));
   }
   const ids = stops.map(s => s.id);
-  assert.ok(ids.indexOf('file') > -1 && ids.indexOf('file') < ids.indexOf('example') && ids.indexOf('example') < ids.indexOf('workflow'), ids.join(' > '));
+  assert.ok(ids.indexOf('example') > -1 && ids.indexOf('example') < ids.indexOf('file') && ids.indexOf('file') < ids.indexOf('workflow'), ids.join(' > '));
   assert.ok(stops.every(s => s.ring), JSON.stringify(stops));
   await page.close();
 });
@@ -405,5 +411,67 @@ test('with JavaScript off the page explains why it cannot check, and hides the f
   assert.ok(await page.isHidden('#form'));
   assert.ok(await page.isHidden('#result'));
   assert.ok(await page.isVisible('#assembly'));
+  assert.deepEqual(await moduleStates(page), ['pe:fail:Fix', 'te:pass:Fine', 'dit:pass:Fine', 'vae:pass:Fine'], 'the static drawing is the example');
+  assert.equal(await page.textContent('#assembly-caption'), 'Example · official template · 1 to fix');
   await ctx.close();
+});
+
+test('C1: the page opens on the example drawn exactly as "Try the example" draws it; a reader\'s file replaces it', async () => {
+  const { page, errors } = await open(1440);
+  const drawing = () => page.evaluate(() => [document.getElementById('assembly-caption').textContent, document.getElementById('slots').innerHTML]);
+  const opened = await drawing();
+  assert.equal(opened[0], 'Example · official template · 1 to fix');
+  assert.match(await page.textContent('#sample-label'), /^Example result · lit on the drawing$/);
+  assert.equal(await page.getAttribute('#example', 'class'), 'btn btn-primary', 'the example is the filled button');
+  assert.match(await page.getAttribute('label.file-btn', 'class'), /\bbtn-quiet\b/, 'the picker is the outline button');
+  assert.ok(await page.evaluate(() => document.getElementById('example').compareDocumentPosition(document.getElementById('file')) & Node.DOCUMENT_POSITION_FOLLOWING), 'the example comes first');
+  await page.click('#example');
+  await page.waitForSelector('#verdict:not(.empty)');
+  assert.deepEqual(await drawing(), opened, 'static markup == rendered example');
+  const dir = await mkdtemp(join(tmpdir(), 'qwen-preflight-'));
+  const file = join(dir, 'corrected.api.json');
+  await writeFile(file, await fixture('corrected.api.json'));
+  await page.setInputFiles('#file', file);
+  await page.waitForFunction(() => /^Your workflow/.test(document.getElementById('assembly-caption').textContent));
+  assert.equal(await page.textContent('#assembly-caption'), 'Your workflow · 0 to fix');
+  assert.equal(await page.$eval('#slots .m-pe', li => li.classList.contains('pass')), true);
+  assert.equal(await page.isVisible('#sample-result'), false);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test('C2: the VRAM plan comes from the workflow alone; the optional row says what it adds', async () => {
+  const { page, errors } = await open(1440);
+  assert.match(await page.textContent('#verdict'), /a VRAM plan from the published file sizes/);
+  assert.equal((await page.textContent('#optional summary')).replace(/\s+/g, ' ').trim(), 'Your model files and ComfyUI version optional: finds files in the wrong folder and checks your version');
+  await page.click('#example');
+  await page.waitForSelector('#verdict:not(.empty)');
+  assert.equal(await page.$eval('#optional', d => d.open), false, 'the optional row stayed closed');
+  assert.equal(await page.isVisible('#vram-wrap'), true, 'the plan is there without the optional row');
+  assert.equal(await page.$$eval('#vram tbody tr', rows => rows.length), 6, 'four stages and two pairs');
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test('C3: the first screen after picking a file shows the result at 390x844 and 320x568', async () => {
+  for (const [width, height] of [[390, 844], [320, 568]]) {
+    const { page, errors } = await open(width);
+    await page.setViewportSize({ width, height });
+    await page.evaluate(() => document.fonts.ready);
+    assert.match(await page.textContent('#file-status'), /checked at once/);
+    const dir = await mkdtemp(join(tmpdir(), 'qwen-preflight-'));
+    const file = join(dir, 'broken.api.json');
+    await writeFile(file, await fixture('broken.api.json'));
+    await page.setInputFiles('#file', file);
+    await page.waitForSelector('#verdict:not(.empty)');
+    const m = await page.evaluate(() => {
+      const box = s => { const r = document.querySelector(s).getBoundingClientRect(); return [r.top, r.bottom]; };
+      return { caption: box('#assembly-caption'), pe: box('#slots .m-pe'), verdict: box('#verdict'), vh: innerHeight };
+    });
+    assert.equal(await page.textContent('#assembly-caption'), 'Your workflow · 1 to fix');
+    assert.ok(m.caption[0] >= 0 && m.pe[1] <= m.vh, `${width}x${height}: caption and the lit enhancer on screen ${JSON.stringify(m)}`);
+    if (height >= 844) assert.ok(m.verdict[1] <= m.vh, `${width}x${height}: verdict on screen ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
 });

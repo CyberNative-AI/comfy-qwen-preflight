@@ -31,10 +31,10 @@
         <div class="bench-copy">
           <p class="label"><b>Free check</b> · Qwen-Image 2.1 in ComfyUI</p>
           <h1 id="title">Check your Qwen&#8209;Image&nbsp;2.1 workflow before the first&nbsp;run.</h1>
-          <p class="maker"><a href="https://cybernative.ai/about/">Made by CyberNative AI LLC, an AI-run company</a></p>
+          <p class="maker"><a href="https://cybernative.ai/about/">Made by CyberNative AI LLC, an AI-run company</a><span class="maker-more"><span class="maker-sep" aria-hidden="true">·</span><a class="maker-check" href="https://cybernative.ai/about/#how-we-check">How we check</a></span></p>
           <p class="lede">Some wiring mistakes run without an error and still change your images. Add your exported workflow and get a short list of what to fix.</p>
           <div class="sample" id="sample-result" role="group" aria-labelledby="sample-label">
-            <p class="sample-tag" id="sample-label">Example result <span>· official template</span></p>
+            <p class="sample-tag" id="sample-label">Example result <span>· lit on the drawing</span></p>
             <p class="sample-verdict"><span class="sample-key">Found</span> Prompt enhancer: The edit PE runs without its system prompt</p>
             <p class="sample-fix"><span class="sample-key">Fix</span> Connect a String (Multiline) node holding the PE-I2I system_prompt.txt to the system_prompt input, and turn use_default_template on.</p>
           </div>
@@ -52,11 +52,11 @@
           <h2 class="sr" id="workflow-check" tabindex="-1">Check a workflow</h2>
           <div class="drop" id="drop">
             <div class="pick">
-              <label class="btn btn-primary file-btn" for="file">Choose a workflow .json<input id="file" type="file" accept=".json,application/json"></label>
-              <button class="btn btn-quiet" type="button" id="example">Try the example</button>
+              <button class="btn btn-primary" type="button" id="example">Try the example</button>
+              <label class="btn btn-quiet file-btn" for="file">Choose a workflow .json<input id="file" type="file" accept=".json,application/json"></label>
             </div>
-            <p class="hint" id="example-note">“Try the example” checks the official Image Edit template from package 0.11.70 in one click. To see a fix work end to end, <a href="first-use.html">download a broken file and its repair</a> and check both.</p>
-            <p class="hint drop-status" id="file-status" aria-live="polite">Or drop the file here, or paste it below.</p>
+            <p class="hint" id="example-note">“Try the example” runs the check on the official Image Edit template from package 0.11.70 and shows its whole result. To see a fix work end to end, <a href="first-use.html">download a broken file and its repair</a> and check both.</p>
+            <p class="hint drop-status" id="file-status" aria-live="polite">A file you choose or drop here is checked at once. Or paste it below.</p>
           </div>
           <p class="limit"><span class="label-limit">Private</span> Your workflow stays in this tab. Nothing is uploaded or stored, and the page’s security policy blocks every network request.</p>
 
@@ -64,7 +64,7 @@
           <textarea id="workflow" spellcheck="false" autocomplete="off" placeholder='{"nodes": [ … ], "links": [ … ] }   or   {"3": {"class_type": "KSampler", … }}'></textarea>
 
           <details class="optional" id="optional">
-            <summary><span class="sum-text">Your model files and ComfyUI version <span class="hint">optional</span></span></summary>
+            <summary><span class="sum-text">Your model files and ComfyUI version <span class="hint">optional: finds files in the wrong folder and checks your version</span></span></summary>
             <label class="field" for="listing">Model files or startup log<span class="hint">Paste a folder listing (for example the output of <code>ls -R models</code> or <code>dir /s models</code>), file names, or the startup line “ComfyUI version: …”. This finds files in the wrong folder and checks your version.</span></label>
             <textarea id="listing" spellcheck="false" autocomplete="off" placeholder="models/text_encoders/qwen3vl_8b_int8_convrot.safetensors&#10;models/diffusion_models/qwen-image-2.1-Q4_K_M.gguf&#10;ComfyUI version: 0.38.0"></textarea>
             <label class="field" for="version">ComfyUI version<span class="hint">If it is not in the log above. Settings › About shows it.</span></label>
@@ -79,23 +79,23 @@
         <div class="art">
         <figure class="assembly-figure" id="assembly" aria-labelledby="assembly-caption" aria-describedby="assembly-note">
           <div class="plate">
-            <p class="label plate-label" id="assembly-caption"><b>Four files</b> · <span id="assembly-state">not checked yet</span></p>
+            <p class="label plate-label" id="assembly-caption"><b id="assembly-whose">Example</b> · <span id="assembly-state">official template · 1 to fix</span></p>
             <ol class="assembly" id="slots">
-              <li class="module m-pe slot idle" data-stage="pe">
+              <li class="module m-pe slot fail" data-stage="pe">
                 <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
-                <span class="m-text"><span class="m-role">Prompt enhancer <i>optional</i></span><span class="m-state">Not checked</span><code class="m-file">qwen3.5_9b_qwen_image_2.1_pe_t2i / _pe_i2i</code><span class="m-node">CLIPLoader → Generate Text</span></span>
+                <span class="m-text"><span class="m-role">Prompt enhancer <i>optional</i></span><span class="m-state">Fix</span><code class="m-file">qwen3.<wbr>5_<wbr>9b_<wbr>qwen_<wbr>image_<wbr>2.<wbr>1_<wbr>pe_<wbr>i2i.<wbr>int8_<wbr>convrot.<wbr>safetensors</code><span class="m-node">#459:477 CLIPLoader</span></span>
               </li>
-              <li class="module m-te slot idle" data-stage="te">
+              <li class="module m-te slot pass" data-stage="te">
                 <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
-                <span class="m-text"><span class="m-role">Text encoder</span><span class="m-state">Not checked</span><code class="m-file">qwen3vl_8b_int8_convrot · bf16 · w4a8</code><span class="m-node">CLIPLoader, type qwen_image → Text Encode Qwen Image 2.1</span></span>
+                <span class="m-text"><span class="m-role">Text encoder</span><span class="m-state">Fine</span><code class="m-file">qwen3vl_<wbr>8b_<wbr>int8_<wbr>convrot.<wbr>safetensors</code><span class="m-node">#459:453 CLIPLoader</span></span>
               </li>
-              <li class="module m-dit slot idle" data-stage="dit">
+              <li class="module m-dit slot pass" data-stage="dit">
                 <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
-                <span class="m-text"><span class="m-role">Diffusion model</span><span class="m-state">Not checked</span><code class="m-file">qwen_image_2.1_int8_convrot · bf16 · .gguf</code><span class="m-node">Load Diffusion Model · GGUF: Unet Loader (GGUF)</span></span>
+                <span class="m-text"><span class="m-role">Diffusion model</span><span class="m-state">Fine</span><code class="m-file">qwen_<wbr>image_<wbr>2.<wbr>1_<wbr>int8_<wbr>convrot.<wbr>safetensors</code><span class="m-node">#459:451 UNETLoader</span></span>
               </li>
-              <li class="module m-vae slot idle" data-stage="vae">
+              <li class="module m-vae slot pass" data-stage="vae">
                 <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
-                <span class="m-text"><span class="m-role">VAE</span><span class="m-state">Not checked</span><code class="m-file">qwen_image_2.1_vae_bf16</code><span class="m-node">Load VAE</span></span>
+                <span class="m-text"><span class="m-role">VAE</span><span class="m-state">Fine</span><code class="m-file">qwen_<wbr>image_<wbr>2.<wbr>1_<wbr>vae_<wbr>bf16.<wbr>safetensors</code><span class="m-node">#459:454 VAELoader</span></span>
               </li>
             </ol>
           </div>
@@ -107,7 +107,7 @@
         </div>
 
         <section class="result" id="result" aria-live="polite" aria-labelledby="verdict" tabindex="-1">
-          <p class="verdict empty" id="verdict">Your result appears here: a fix list, the four slots lit on the drawing, a VRAM plan and everything that passed.</p>
+          <p class="verdict empty" id="verdict">Your result appears here: a fix list, the four slots lit on the drawing, a VRAM plan from the published file sizes, and everything that passed.</p>
           <div id="fixes-wrap" hidden><h3 class="result-h">Fix before you run</h3><ol class="fixes" id="fixes"></ol></div>
           <div id="vram-wrap" hidden><h3 class="result-h">VRAM plan <span class="hint">· weights, and what we measured</span></h3><div class="vram" id="vram"></div></div>
           <div id="notes-wrap" hidden><h3 class="result-h">Notes</h3><ol class="fixes notes" id="notes"></ol></div>
