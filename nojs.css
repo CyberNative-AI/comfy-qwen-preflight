@@ -1,0 +1,4 @@
+/* Loaded only when JavaScript is off: the check cannot run, so the form and result give way to the explanation. */
+.bench-form, .result { display: none; }
+.bench-grid > noscript { grid-area: form; display: block; }
+.nojs { display: grid; gap: var(--wp-3); max-width: 40rem; background: var(--wp-panel); border: 2px solid var(--wp-ink); border-radius: 8px; padding: var(--wp-6); }

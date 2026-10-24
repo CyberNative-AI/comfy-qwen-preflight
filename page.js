@@ -2,7 +2,7 @@ import { check, SOURCES, BUDGETS, gib } from './engine.js';
 
 const byId = id => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-const STATUS = { fail: 'Fix', dormant: 'When on', warn: 'Check', info: 'Note', pass: 'Fine', absent: 'Not used', missing: 'Missing' };
+const STATUS = { fail: 'Fix', dormant: 'When on', warn: 'Check', info: 'Note', pass: 'Fine', absent: 'Not used', missing: 'Missing', idle: 'Not checked' };
 // File names wrap at their own separators, not mid-word.
 const breakable = (cls, text) => { const e = el('code', cls); String(text).split(/(?<=[_.\-\/])/).forEach((part, i) => { if (i) e.append(document.createElement('wbr')); e.append(part); }); return e; };
 const MAX_BYTES = 20 * 1024 * 1024;
@@ -74,15 +74,35 @@ function findingItem(f) {
   return li;
 }
 
+// The four modules of the drawing are the slot readout. Before a check, and when nothing could be checked,
+// they say "Not checked" and keep the file each slot expects.
+const modules = [...byId('slots').children];
+const expected = modules.map(li => [li.querySelector('.m-file').textContent, li.querySelector('.m-node').textContent]);
+
+function setModule(li, status, files, emptyText) {
+  li.className = li.className.replace(/\b(idle|pass|fail|dormant|warn|absent|missing)\b/g, '').trim() + ' ' + status;
+  li.querySelector('.m-state').textContent = STATUS[status];
+  const text = li.querySelector('.m-text');
+  text.querySelectorAll('.m-file, .m-node').forEach(n => n.remove());
+  for (const [name, node] of files) { text.append(breakable('m-file', name), el('span', 'm-node', node)); }
+  if (!files.length && emptyText) text.append(el('span', 'm-node', emptyText));
+}
+
+function resetModules(reason) {
+  modules.forEach((li, i) => setModule(li, 'idle', [expected[i]]));
+  byId('assembly-state').textContent = reason;
+}
+
 function render(r) {
   const verdict = byId('verdict');
-  const parts = ['slots', 'fixes-wrap', 'vram-wrap', 'notes-wrap', 'passes-wrap'].map(byId);
+  const parts = ['fixes-wrap', 'vram-wrap', 'notes-wrap', 'passes-wrap'].map(byId);
   for (const p of parts) p.hidden = true;
-  for (const id of ['slots', 'fixes', 'vram', 'notes', 'passes']) byId(id).replaceChildren();
+  for (const id of ['fixes', 'vram', 'notes', 'passes']) byId(id).replaceChildren();
   verdict.className = 'verdict';
 
-  if (!r.ok) { verdict.classList.add('empty', 'bad'); verdict.textContent = r.message; focusResult(); return; }
+  if (!r.ok) { resetModules('not checked: the input could not be read'); verdict.classList.add('empty', 'bad'); verdict.textContent = r.message; focusResult(); return; }
   if (r.notQwen) {
+    resetModules('not checked: no Qwen-Image 2.1 files or nodes');
     verdict.classList.add('empty');
     verdict.textContent = `This workflow (${r.nodeCount} nodes) has no Qwen-Image 2.1 files or nodes, so there is nothing to check. This page only knows the Qwen-Image 2.1 pipeline.`;
     focusResult(); return;
@@ -102,21 +122,9 @@ function render(r) {
   const of = el('span', 'of', bits.join(' · '));
   verdict.append(of);
 
-  // Slots
-  const slots = byId('slots');
-  r.slots.forEach((s, i) => {
-    const li = el('li', `slot ${s.status}`);
-    li.append(el('span', 'num', String(i + 1)));
-    const body = el('span', 'slot-body');
-    const top = el('span', 'slot-top');
-    top.append(el('b', null, s.label), el('span', `status ${s.status}`, STATUS[s.status]));
-    body.append(top);
-    if (s.files.length) for (const f of s.files) { body.append(breakable('slot-file', f.name)); body.append(el('span', 'slot-node', f.node)); }
-    else body.append(el('span', 'slot-node', s.optional ? 'Not in this workflow' : 'No loader found'));
-    li.append(body);
-    slots.append(li);
-  });
-  slots.hidden = false;
+  // Slots, lit on the drawing in its order: enhancer, text encoder, diffusion model, VAE.
+  r.slots.forEach((s, i) => setModule(modules[i], s.status, s.files.map(f => [f.name, f.node]), s.optional ? 'Not in this workflow' : 'No loader found'));
+  byId('assembly-state').textContent = 'as your workflow fills them' + (fail ? ` · ${fail} to fix, listed below` : dormant ? ` · ${dormant} when switched on, below` : '');
 
   const alarms = r.findings.filter(f => ['fail', 'dormant', 'warn'].includes(f.status));
   const notes = r.findings.filter(f => f.status === 'info');
@@ -184,8 +192,10 @@ function renderVram(v) {
   byId('vram-wrap').hidden = false;
 }
 
+// On one column the drawing sits right above the result, so bring the lit drawing into view. On two columns
+// the drawing stays beside the result, so bring the result up.
 function focusResult() {
   const res = byId('result');
   res.focus({ preventScroll: true });
-  if (window.matchMedia('(max-width: 900px)').matches) res.scrollIntoView({ block: 'start' });
+  byId(window.matchMedia('(max-width: 900px)').matches ? 'assembly' : 'result').scrollIntoView({ block: 'start' });
 }

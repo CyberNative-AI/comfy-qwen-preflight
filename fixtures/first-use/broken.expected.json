@@ -1,0 +1,381 @@
+{
+  "ok": true,
+  "format": "api",
+  "nodeCount": 20,
+  "subgraphs": 0,
+  "version": "0.38.0",
+  "listing": {
+    "files": [],
+    "version": null
+  },
+  "findings": [
+    {
+      "status": "fail",
+      "sources": [
+        "peI2i",
+        "peCore",
+        "textgen",
+        "thread4"
+      ],
+      "id": "pe.no-system",
+      "area": "pe",
+      "stage": "pe",
+      "node": "#459:500 TextGenerate",
+      "title": "The edit PE runs without its system prompt",
+      "detail": "Nothing supplies Qwen's system prompt to this Generate Text node. Qwen's own runner refuses to start without it, and the PE was trained with it. Without it the PE still writes a prompt, but a different one: in our test of the official Text to Image template it came out 22–39% shorter.",
+      "fix": "Connect a String (Multiline) node holding the PE-I2I system_prompt.txt to the system_prompt input (ComfyUI 0.38.0+), and turn use_default_template on. It is off here, and connecting the prompt alone still drops it. On 0.37, start the prompt with <|im_start|>system, then the system prompt, then <|im_end|>, then the user turn."
+    },
+    {
+      "status": "info",
+      "sources": [
+        "peCore",
+        "textgen"
+      ],
+      "id": "pe.max-tokens",
+      "area": "pe",
+      "stage": "pe",
+      "node": "#459:500 TextGenerate",
+      "title": "max_length is 16256; Qwen's runner uses 24,000",
+      "detail": "Not measured here: we have not run the Image Edit enhancer, so we cannot say whether this budget is ever too short.",
+      "fix": null
+    }
+  ],
+  "passes": [
+    {
+      "id": "files.slots",
+      "status": "pass",
+      "title": "Every model file sits in a loader that matches its role",
+      "sources": [
+        "comfyRepo"
+      ]
+    },
+    {
+      "id": "nodes.version",
+      "status": "pass",
+      "title": "ComfyUI 0.38.0 has every core node this workflow uses (QwenImage21Cache, TextEncodeQwenImage21: 0.37.0 or later)",
+      "sources": [
+        "releases",
+        "nodesQwen"
+      ]
+    },
+    {
+      "id": "nodes.custom",
+      "status": "pass",
+      "title": "No custom nodes: everything is core ComfyUI",
+      "sources": [
+        "releases"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "stage": "pe",
+      "label": "Prompt enhancer",
+      "expect": "qwen3.5_9b_qwen_image_2.1_pe_t2i / _pe_i2i → CLIPLoader → Generate Text",
+      "files": [
+        {
+          "name": "qwen3.5_9b_qwen_image_2.1_pe_i2i.int8_convrot.safetensors",
+          "loader": "CLIPLoader",
+          "node": "#459:477 CLIPLoader",
+          "bytes": 9471072252,
+          "file": {
+            "name": "qwen3.5_9b_qwen_image_2.1_pe_i2i.int8_convrot.safetensors",
+            "role": "pe",
+            "ext": "safetensors",
+            "gguf": false,
+            "q21": true,
+            "bytes": 9471072252,
+            "task": "i2i"
+          }
+        }
+      ],
+      "optional": true,
+      "status": "fail"
+    },
+    {
+      "stage": "te",
+      "label": "Text encoder",
+      "expect": "qwen3vl_8b_* → CLIPLoader, type qwen_image → Text Encode Qwen Image 2.1",
+      "files": [
+        {
+          "name": "qwen3vl_8b_int8_convrot.safetensors",
+          "loader": "CLIPLoader",
+          "node": "#459:453 CLIPLoader",
+          "bytes": 9350798360,
+          "file": {
+            "name": "qwen3vl_8b_int8_convrot.safetensors",
+            "role": "te",
+            "ext": "safetensors",
+            "gguf": false,
+            "q21": false,
+            "bytes": 9350798360
+          }
+        }
+      ],
+      "optional": false,
+      "status": "pass"
+    },
+    {
+      "stage": "dit",
+      "label": "Diffusion model",
+      "expect": "qwen_image_2.1_* → Load Diffusion Model (GGUF: Unet Loader GGUF)",
+      "files": [
+        {
+          "name": "qwen_image_2.1_int8_convrot.safetensors",
+          "loader": "UNETLoader",
+          "node": "#459:451 UNETLoader",
+          "bytes": 7256783064,
+          "file": {
+            "name": "qwen_image_2.1_int8_convrot.safetensors",
+            "role": "dit",
+            "ext": "safetensors",
+            "gguf": false,
+            "q21": true,
+            "bytes": 7256783064
+          }
+        }
+      ],
+      "optional": false,
+      "status": "pass"
+    },
+    {
+      "stage": "vae",
+      "label": "VAE",
+      "expect": "qwen_image_2.1_vae_bf16 → Load VAE",
+      "files": [
+        {
+          "name": "qwen_image_2.1_vae_bf16.safetensors",
+          "loader": "VAELoader",
+          "node": "#459:454 VAELoader",
+          "bytes": 675509688,
+          "file": {
+            "name": "qwen_image_2.1_vae_bf16.safetensors",
+            "role": "vae",
+            "ext": "safetensors",
+            "gguf": false,
+            "q21": true,
+            "bytes": 675509688
+          }
+        }
+      ],
+      "optional": false,
+      "status": "pass"
+    }
+  ],
+  "vram": {
+    "stages": [
+      {
+        "stage": "pe",
+        "label": "Prompt enhancer",
+        "name": "qwen3.5_9b_qwen_image_2.1_pe_i2i.int8_convrot.safetensors",
+        "task": "i2i",
+        "bytes": 9471072252,
+        "gib": 8.820623394101858,
+        "off": false
+      },
+      {
+        "stage": "te",
+        "label": "Text encoder",
+        "name": "qwen3vl_8b_int8_convrot.safetensors",
+        "task": null,
+        "bytes": 9350798360,
+        "gib": 8.708609603345394,
+        "off": false
+      },
+      {
+        "stage": "dit",
+        "label": "Diffusion model",
+        "name": "qwen_image_2.1_int8_convrot.safetensors",
+        "task": null,
+        "bytes": 7256783064,
+        "gib": 6.758405886590481,
+        "off": false
+      },
+      {
+        "stage": "vae",
+        "label": "VAE",
+        "name": "qwen_image_2.1_vae_bf16.safetensors",
+        "task": null,
+        "bytes": 675509688,
+        "gib": 0.6291174218058586,
+        "off": false
+      }
+    ],
+    "unknown": [],
+    "pairs": [
+      {
+        "a": {
+          "stage": "pe",
+          "label": "Prompt enhancer",
+          "name": "qwen3.5_9b_qwen_image_2.1_pe_i2i.int8_convrot.safetensors",
+          "task": "i2i",
+          "bytes": 9471072252,
+          "gib": 8.820623394101858,
+          "off": false
+        },
+        "b": {
+          "stage": "te",
+          "label": "Text encoder",
+          "name": "qwen3vl_8b_int8_convrot.safetensors",
+          "task": null,
+          "bytes": 9350798360,
+          "gib": 8.708609603345394,
+          "off": false
+        },
+        "gib": 17.529232997447252
+      },
+      {
+        "a": {
+          "stage": "te",
+          "label": "Text encoder",
+          "name": "qwen3vl_8b_int8_convrot.safetensors",
+          "task": null,
+          "bytes": 9350798360,
+          "gib": 8.708609603345394,
+          "off": false
+        },
+        "b": {
+          "stage": "dit",
+          "label": "Diffusion model",
+          "name": "qwen_image_2.1_int8_convrot.safetensors",
+          "task": null,
+          "bytes": 7256783064,
+          "gib": 6.758405886590481,
+          "off": false
+        },
+        "gib": 15.467015489935875
+      }
+    ],
+    "rows": [
+      {
+        "budget": 12,
+        "alone": [
+          {
+            "stage": "pe",
+            "fits": true
+          },
+          {
+            "stage": "te",
+            "fits": true
+          },
+          {
+            "stage": "dit",
+            "fits": true
+          },
+          {
+            "stage": "vae",
+            "fits": true
+          }
+        ],
+        "pairs": [
+          {
+            "stages": [
+              "pe",
+              "te"
+            ],
+            "fits": false,
+            "gib": 17.529232997447252
+          },
+          {
+            "stages": [
+              "te",
+              "dit"
+            ],
+            "fits": false,
+            "gib": 15.467015489935875
+          }
+        ]
+      },
+      {
+        "budget": 16,
+        "alone": [
+          {
+            "stage": "pe",
+            "fits": true
+          },
+          {
+            "stage": "te",
+            "fits": true
+          },
+          {
+            "stage": "dit",
+            "fits": true
+          },
+          {
+            "stage": "vae",
+            "fits": true
+          }
+        ],
+        "pairs": [
+          {
+            "stages": [
+              "pe",
+              "te"
+            ],
+            "fits": false,
+            "gib": 17.529232997447252
+          },
+          {
+            "stages": [
+              "te",
+              "dit"
+            ],
+            "fits": true,
+            "gib": 15.467015489935875
+          }
+        ]
+      },
+      {
+        "budget": 24,
+        "alone": [
+          {
+            "stage": "pe",
+            "fits": true
+          },
+          {
+            "stage": "te",
+            "fits": true
+          },
+          {
+            "stage": "dit",
+            "fits": true
+          },
+          {
+            "stage": "vae",
+            "fits": true
+          }
+        ],
+        "pairs": [
+          {
+            "stages": [
+              "pe",
+              "te"
+            ],
+            "fits": true,
+            "gib": 17.529232997447252
+          },
+          {
+            "stages": [
+              "te",
+              "dit"
+            ],
+            "fits": true,
+            "gib": 15.467015489935875
+          }
+        ]
+      }
+    ],
+    "measured": [],
+    "notMeasured": [
+      "the full graph on a 24 GB card",
+      "the edit enhancer (PE-I2I)"
+    ]
+  },
+  "summary": {
+    "fail": 1,
+    "warn": 0,
+    "dormant": 0,
+    "info": 1,
+    "pass": 3
+  }
+}

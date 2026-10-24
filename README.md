@@ -16,6 +16,8 @@ Each rule cites its primary source in `engine.js` (`SOURCES`): the Comfy-Org and
 
 ## Run
 
+For a first check, open [the first-use guide](first-use.html). It pairs a broken public-template sample with its two-setting repair, exact expected outputs, export troubleshooting and optional privacy-safe feedback.
+
 [Reproduce a wrong-loader finding](docs/wrong-loader-walkthrough.md)
 
 [Reproduce the PE link-only repair check](docs/pe-system-prompt-check.md)

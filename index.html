@@ -8,46 +8,103 @@
   <title>Qwen-Image 2.1 ComfyUI workflow check · wrong loader, missing nodes, PE system prompt · free, runs in your browser</title>
   <meta name="description" content="Drop in a Qwen-Image 2.1 ComfyUI workflow and see which file belongs in which loader, which ComfyUI version the nodes need, and whether the prompt enhancer gets its system prompt. Nothing is uploaded.">
   <link rel="icon" href="assets/cybernative-cn-mark.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/fonts/Fraunces144ptSoft-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/IBMPlexSans-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/IBMPlexMono-Regular-Latin1.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/Syne-Display-Latin1-500-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/DMSans-Text-Latin1-400-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/DMMono-Regular-Latin1.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/DMMono-Medium-Latin1.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="example.js">
   <link rel="stylesheet" href="style.css">
+  <noscript><link rel="stylesheet" href="nojs.css"></noscript>
 </head>
 <body>
-  <a class="skip" href="#check">Skip to the check</a>
+  <a class="skip" href="#workflow-check">Skip to the check</a>
   <header class="site-header">
     <div class="wrap">
-      <span class="brand"><a class="brand-link" href="https://cybernative.ai/"><img src="assets/cybernative-cn-mark.svg" alt="" width="28" height="28">CyberNative</a> <span class="product">Qwen-Image 2.1 preflight</span></span>
-      <span class="local-badge" title="The check runs in this tab. The page's security policy blocks every network request.">Runs offline in this tab</span>
+      <span class="brand"><a class="brand-link" href="https://cybernative.ai/" aria-label="CyberNative home"><img src="assets/cn-mark-header.svg" alt="" width="32" height="32"><span class="wordmark">cybernative</span></a> <span class="product">Qwen-Image 2.1 preflight</span></span>
+      <span class="local-badge" title="The check runs in this tab. The page's security policy blocks every network request.">Runs offline<span class="badge-more"> in this tab</span></span>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="wrap">
-        <div class="hero-copy">
+    <section class="bench" id="check" aria-labelledby="title">
+      <div class="wrap bench-grid">
+        <div class="bench-copy">
           <p class="label"><b>Free check</b> · Qwen-Image 2.1 in ComfyUI</p>
-          <h1>Check your Qwen&#8209;Image&nbsp;2.1 workflow before the first&nbsp;run.</h1>
-          <p class="lede">Qwen-Image 2.1 needs up to four separate model files. Some mistakes run without an error: the prompt enhancer in the text-encoder slot, or the enhancer without its system prompt. Drop in your workflow and get a short list of what to fix.</p>
-          <p class="privacy"><span class="label-limit">Private</span> Your workflow never leaves this page. Nothing is uploaded or stored, and the page’s security policy blocks all network requests.</p>
-          <div class="actions"><a class="btn btn-primary" href="#check">Check a workflow</a></div>
-          <ul class="terms">
-            <li>UI or API format</li>
-            <li>Subgraphs included</li>
-            <li>Every rule cites its source</li>
-          </ul>
+          <h1 id="title">Check your Qwen&#8209;Image&nbsp;2.1 workflow before the first&nbsp;run.</h1>
+          <p class="lede">Up to four model files, and some mistakes run without an error: the prompt enhancer in the text-encoder slot, or the enhancer without its system prompt. Add your exported workflow and get a short list of what to fix.</p>
         </div>
-        <figure class="rack-figure" aria-labelledby="rack-caption">
-          <p class="label" id="rack-caption"><b>Four files</b> · where each one goes</p>
-          <ol class="rack">
-            <li class="bay"><span class="num">1</span><span class="bay-body"><b>Prompt enhancer <i>· optional</i></b><code>qwen3.5_9b_qwen_image_2.1_pe_t2i / _pe_i2i</code><span class="bay-to">CLIPLoader → <em>Generate Text</em></span></span></li>
-            <li class="bay"><span class="num">2</span><span class="bay-body"><b>Text encoder</b><code>qwen3vl_8b_int8_convrot · bf16 · w4a8</code><span class="bay-to">CLIPLoader, type qwen_image → <em>Text Encode Qwen Image 2.1</em></span></span></li>
-            <li class="bay"><span class="num">3</span><span class="bay-body"><b>Diffusion model</b><code>qwen_image_2.1_int8_convrot · bf16 · .gguf</code><span class="bay-to">Load Diffusion Model <i>· GGUF: Unet Loader (GGUF)</i></span></span></li>
-            <li class="bay"><span class="num">4</span><span class="bay-body"><b>VAE</b><code>qwen_image_2.1_vae_bf16</code><span class="bay-to">Load VAE</span></span></li>
-          </ol>
-          <figcaption>The PE and the text encoder both load through CLIPLoader from models/text_encoders/. Only the text encoder feeds the image encoder. The PE feeds Generate Text, and its output becomes your prompt. Swap them and ComfyUI still runs, but the images come out garbled.</figcaption>
+
+        <noscript>
+          <div class="nojs">
+            <p class="label"><b>JavaScript is off</b></p>
+            <p>The check runs as a script in this tab, so it cannot run here. Nothing is lost: your workflow was never sent anywhere.</p>
+            <p>Turn JavaScript on for this page to check a workflow. The four slots it checks are drawn beside this note, and the template finding and limits are below.</p>
+          </div>
+        </noscript>
+
+        <form id="form" class="bench-form" novalidate aria-label="Check a workflow">
+          <h2 class="sr" id="workflow-check" tabindex="-1">Check a workflow</h2>
+          <div class="drop" id="drop">
+            <div class="pick">
+              <label class="btn btn-primary file-btn" for="file">Choose a workflow .json<input id="file" type="file" accept=".json,application/json"></label>
+              <button class="btn btn-quiet" type="button" id="example">Try the example</button>
+            </div>
+            <p class="hint" id="example-note">The example is the official Image Edit template as templates package 0.11.70 wires it. First time? <a href="first-use.html">Try a broken sample and its repair</a>.</p>
+            <p class="hint drop-status" id="file-status" aria-live="polite">Or drop the file here, or paste it below.</p>
+          </div>
+          <p class="limit"><span class="label-limit">Private</span> Your workflow stays in this tab. Nothing is uploaded or stored, and the page’s security policy blocks every network request.</p>
+
+          <label class="field" for="workflow">Or paste the workflow JSON<span class="hint">In ComfyUI: Workflow › Export, or Export (API). UI and API format, subgraphs included.</span></label>
+          <textarea id="workflow" spellcheck="false" autocomplete="off" placeholder='{"nodes": [ … ], "links": [ … ] }   or   {"3": {"class_type": "KSampler", … }}'></textarea>
+
+          <details class="optional" id="optional">
+            <summary>Your model files and ComfyUI version <span class="hint">· optional</span></summary>
+            <label class="field" for="listing">Model files or startup log<span class="hint">Paste a folder listing (for example the output of <code>ls -R models</code> or <code>dir /s models</code>), file names, or the startup line “ComfyUI version: …”. This finds files in the wrong folder and checks your version.</span></label>
+            <textarea id="listing" spellcheck="false" autocomplete="off" placeholder="models/text_encoders/qwen3vl_8b_int8_convrot.safetensors&#10;models/diffusion_models/qwen-image-2.1-Q4_K_M.gguf&#10;ComfyUI version: 0.38.0"></textarea>
+            <label class="field" for="version">ComfyUI version<span class="hint">If it is not in the log above. Settings › About shows it.</span></label>
+            <input id="version" inputmode="decimal" autocomplete="off" placeholder="0.38.0">
+          </details>
+
+          <p class="form-error" id="form-error" role="alert" hidden></p>
+          <div class="submit-row"><button class="btn btn-primary" type="submit">Check workflow</button></div>
+          <p class="limit"><span class="label-limit">Limit</span> It reads the workflow and file names only. It cannot see launch flags, your hardware, memory use while ComfyUI runs, or image quality. <a href="#limits">What a workflow file cannot tell us</a></p>
+        </form>
+
+        <figure class="assembly-figure" id="assembly" aria-labelledby="assembly-caption">
+          <div class="plate">
+            <p class="label plate-label" id="assembly-caption"><b>Four files</b> · <span id="assembly-state">not checked yet</span></p>
+            <ol class="assembly" id="slots">
+              <li class="module m-pe slot idle" data-stage="pe">
+                <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
+                <span class="m-text"><span class="m-role">Prompt enhancer <i>optional</i></span><span class="m-state">Not checked</span><code class="m-file">qwen3.5_9b_qwen_image_2.1_pe_t2i / _pe_i2i</code><span class="m-node">CLIPLoader → Generate Text</span></span>
+              </li>
+              <li class="module m-te slot idle" data-stage="te">
+                <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
+                <span class="m-text"><span class="m-role">Text encoder</span><span class="m-state">Not checked</span><code class="m-file">qwen3vl_8b_int8_convrot · bf16 · w4a8</code><span class="m-node">CLIPLoader, type qwen_image → Text Encode Qwen Image 2.1</span></span>
+              </li>
+              <li class="module m-dit slot idle" data-stage="dit">
+                <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
+                <span class="m-text"><span class="m-role">Diffusion model</span><span class="m-state">Not checked</span><code class="m-file">qwen_image_2.1_int8_convrot · bf16 · .gguf</code><span class="m-node">Load Diffusion Model · GGUF: Unet Loader (GGUF)</span></span>
+              </li>
+              <li class="module m-vae slot idle" data-stage="vae">
+                <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>
+                <span class="m-text"><span class="m-role">VAE</span><span class="m-state">Not checked</span><code class="m-file">qwen_image_2.1_vae_bf16</code><span class="m-node">Load VAE</span></span>
+              </li>
+            </ol>
+          </div>
+          <figcaption>
+            <p class="key"><span class="key-item"><span class="key-path" aria-hidden="true"></span>The path every image takes</span> <span class="key-item"><span class="key-pe" aria-hidden="true"></span>The optional enhancer</span></p>
+            <p>The enhancer and the text encoder both load through CLIPLoader from models/text_encoders/. Only the text encoder feeds the image encoder; the enhancer’s output becomes your prompt. Swap them and ComfyUI still runs, but the images come out garbled.</p>
+          </figcaption>
         </figure>
+
+        <section class="result" id="result" aria-live="polite" aria-labelledby="verdict" tabindex="-1">
+          <p class="verdict empty" id="verdict">Your result appears here: a fix list, the four slots lit on the drawing, a VRAM plan and everything that passed.</p>
+          <div id="fixes-wrap" hidden><h3 class="result-h">Fix before you run</h3><ol class="fixes" id="fixes"></ol></div>
+          <div id="vram-wrap" hidden><h3 class="result-h">VRAM plan <span class="hint">· weights, and what we measured</span></h3><div class="vram" id="vram"></div></div>
+          <div id="notes-wrap" hidden><h3 class="result-h">Notes</h3><ol class="fixes notes" id="notes"></ol></div>
+          <div id="passes-wrap" hidden><h3 class="result-h">Checked and fine</h3><ul class="passes" id="passes"></ul></div>
+        </section>
       </div>
     </section>
 
@@ -60,58 +117,20 @@
         <div class="finding-body">
           <p class="upstream"><span class="label">Status</span> <b>Fix released in templates package 0.11.73.</b> Both templates in <a href="https://pypi.org/project/comfyui-workflow-templates/0.11.73/" rel="noopener noreferrer">0.11.73</a> (checked 2026-10-01) and <a href="https://pypi.org/project/comfyui-workflow-templates/0.11.76/" rel="noopener noreferrer">0.11.76</a> (checked 2026-10-03) contain the <a href="https://github.com/Comfy-Org/workflow_templates/pull/1298" rel="noopener noreferrer">September 30 system-prompt fix</a> and get no system-prompt flag here when freshly opened.</p>
           <p class="upstream">ComfyUI 0.38.0 installs templates package 0.11.70; current ComfyUI source pins 0.11.76 (checked 2026-10-03). Updating the package does not change a workflow you saved from 0.11.70: it keeps its old wiring, so check it anyway.</p>
-          <p><b>Image Edit</b> in 0.11.70 has the enhancer switched on. Its system prompt node is not connected, and Generate Text’s <code>use_default_template</code> is off, so connecting the node alone still drops the prompt.</p>
-          <p><b>Text to Image</b> in 0.11.70 connects the system prompt, but leaves Generate Text’s <code>use_default_template</code> off. ComfyUI 0.38.0 passes <code>system_prompt</code> only when that setting is on, so the prompt is dropped. The enhancer is off by default, so this starts when you switch it on.</p>
-          <p>We checked what reaches the enhancer in ComfyUI 0.38.0 on 2026-09-30: no system prompt, in either template. It still writes a prompt, but a different one. In our Text to Image test it came out 22–39% shorter.</p>
-          <p class="fix-line"><span class="label">Fix</span> <b>Image Edit:</b> connect the system prompt node to <code>system_prompt</code> and turn <code>use_default_template</code> on.<br><b>Text to Image:</b> turn <code>use_default_template</code> on and delete the <code>&lt;|im_start|&gt;system</code> / <code>&lt;|im_end|&gt;</code> wrapper from the text. The check below finds each step.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="tool" id="check" aria-labelledby="tool-title">
-      <div class="wrap">
-        <div class="tool-head">
-          <h2 id="tool-title">Check a workflow</h2>
-          <p class="sub">In ComfyUI: Workflow › Export (or Export (API)). Then drop the .json file here.</p>
-        </div>
-        <div class="tool-grid">
-          <form id="form" novalidate>
-            <fieldset class="step">
-              <legend><span class="step-num">1</span>Workflow</legend>
-              <div class="drop" id="drop">
-                <p class="drop-main"><b>Drop a workflow .json here</b> <span class="hint">or</span> <label class="file-btn" for="file">choose a file<input id="file" type="file" accept=".json,application/json"></label></p>
-                <p class="hint" id="file-status" aria-live="polite">Or paste the JSON below.</p>
-              </div>
-              <label class="field" for="workflow">Workflow JSON</label>
-              <textarea id="workflow" spellcheck="false" autocomplete="off" placeholder='{"nodes": [ … ], "links": [ … ] }   or   {"3": {"class_type": "KSampler", … }}'></textarea>
-            </fieldset>
-            <fieldset class="step">
-              <legend><span class="step-num">2</span>Your files <span class="hint">· optional</span></legend>
-              <label class="field" for="listing">Model files or startup log<span class="hint">Paste a folder listing (for example the output of <code>ls -R models</code> or <code>dir /s models</code>), file names, or the startup line “ComfyUI version: …”. This finds files in the wrong folder and checks your version.</span></label>
-              <textarea id="listing" spellcheck="false" autocomplete="off" placeholder="models/text_encoders/qwen3vl_8b_int8_convrot.safetensors&#10;models/diffusion_models/qwen-image-2.1-Q4_K_M.gguf&#10;ComfyUI version: 0.38.0"></textarea>
-              <label class="field" for="version">ComfyUI version<span class="hint">If it is not in the log above. Settings › About shows it.</span></label>
-              <input id="version" inputmode="decimal" autocomplete="off" placeholder="0.38.0">
-            </fieldset>
-            <p class="form-error" id="form-error" role="alert" hidden></p>
-            <div class="submit-row">
-              <button class="btn btn-primary" type="submit">Check workflow</button>
-              <button class="btn btn-quiet" type="button" id="example">Try the Image Edit template from 0.11.70</button>
+          <p class="fix-line"><span class="label">Fix</span> <b>Image Edit:</b> connect the system prompt node to <code>system_prompt</code> and turn <code>use_default_template</code> on.<br><b>Text to Image:</b> turn <code>use_default_template</code> on and delete the <code>&lt;|im_start|&gt;system</code> / <code>&lt;|im_end|&gt;</code> wrapper from the text. The check above finds each step.</p>
+          <details class="evidence">
+            <summary>Evidence: what each 0.11.70 template does, and what we measured</summary>
+            <div class="evidence-body">
+              <p><b>Image Edit</b> in 0.11.70 has the enhancer switched on. Its system prompt node is not connected, and Generate Text’s <code>use_default_template</code> is off, so connecting the node alone still drops the prompt.</p>
+              <p><b>Text to Image</b> in 0.11.70 connects the system prompt, but leaves Generate Text’s <code>use_default_template</code> off. ComfyUI 0.38.0 passes <code>system_prompt</code> only when that setting is on, so the prompt is dropped. The enhancer is off by default, so this starts when you switch it on.</p>
+              <p>We checked what reaches the enhancer in ComfyUI 0.38.0 on 2026-09-30: no system prompt, in either template. It still writes a prompt, but a different one. In our Text to Image test it came out 22–39% shorter.</p>
             </div>
-          </form>
-
-          <section class="result" id="result" aria-live="polite" aria-labelledby="verdict" tabindex="-1">
-            <p class="verdict empty" id="verdict">Your result appears here: a fix list, the four slots as your workflow fills them, a VRAM plan and everything that passed.</p>
-            <ol class="slots" id="slots" hidden></ol>
-            <div id="fixes-wrap" hidden><h3 class="result-h">Fix before you run</h3><ol class="fixes" id="fixes"></ol></div>
-            <div id="vram-wrap" hidden><h3 class="result-h">VRAM plan <span class="hint">· weights, and what we measured</span></h3><div class="vram" id="vram"></div></div>
-            <div id="notes-wrap" hidden><h3 class="result-h">Notes</h3><ol class="fixes notes" id="notes"></ol></div>
-            <div id="passes-wrap" hidden><h3 class="result-h">Checked and fine</h3><ul class="passes" id="passes"></ul></div>
-          </section>
+          </details>
         </div>
       </div>
     </section>
 
-    <section class="limits" aria-labelledby="limits-title">
+    <section class="limits" id="limits" aria-labelledby="limits-title">
       <div class="wrap">
         <div>
           <p class="label"><b>Limits</b></p>

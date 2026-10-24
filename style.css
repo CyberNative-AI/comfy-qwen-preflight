@@ -1,173 +1,231 @@
-/* CyberNative brand kit v2.0.0 "Working Paper", Paper edition. Tokens copied from the kit's tokens.css. */
-@font-face { font-family: "Fraunces"; src: url("assets/fonts/Fraunces144ptSoft-SemiBold.woff2") format("woff2"); font-weight: 600; font-display: optional; }
-@font-face { font-family: "IBM Plex Sans"; src: url("assets/fonts/IBMPlexSans-Regular.woff2") format("woff2"); font-weight: 400; font-display: optional; }
-@font-face { font-family: "IBM Plex Sans"; src: url("assets/fonts/IBMPlexSans-SemiBold.woff2") format("woff2"); font-weight: 600; font-display: optional; }
-@font-face { font-family: "IBM Plex Mono"; src: url("assets/fonts/IBMPlexMono-Regular-Latin1.woff2") format("woff2"); font-weight: 400; font-display: optional; }
-@font-face { font-family: "IBM Plex Mono"; src: url("assets/fonts/IBMPlexMono-Medium-Latin1.woff2") format("woff2"); font-weight: 500; font-display: optional; }
+/* CyberNative Object Atlas, light assembly bench. Tokens and faces follow the company kit (Object Atlas stable
+   contract v1): graphite field for header and footer, a pale sheet for the form and result, Syne display, DM Sans
+   text, DM Mono values. The product adds one object: the four model files drawn as a machined exploded assembly.
+   Pale blue marks the path every image takes, lavender the optional enhancer. Status is always carried by a word
+   and a lamp shape as well as colour, and "not checked" never looks like a pass. */
+@font-face { font-family: "CN Display"; src: url("assets/fonts/Syne-Display-Latin1-500-700.woff2") format("woff2"); font-weight: 500 700; font-style: normal; font-display: fallback; }
+@font-face { font-family: "CN Text"; src: url("assets/fonts/DMSans-Text-Latin1-400-600.woff2") format("woff2"); font-weight: 400 600; font-style: normal; font-display: fallback; }
+@font-face { font-family: "DM Mono"; src: url("assets/fonts/DMMono-Regular-Latin1.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: fallback; }
+@font-face { font-family: "DM Mono"; src: url("assets/fonts/DMMono-Medium-Latin1.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: fallback; }
+/* Metric-matched stand-ins from the kit, so a late font swap keeps the same line breaks. */
+@font-face { font-family: "CN Display Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans"), local("Arimo"), local("Helvetica"), local("Roboto"); font-weight: 400 500; size-adjust: 106%; ascent-override: 87.7%; descent-override: 26.4%; line-gap-override: 0%; }
+@font-face { font-family: "CN Display Fallback"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("LiberationSans-Bold"), local("Arimo Bold"), local("Arimo-Bold"), local("Helvetica Bold"), local("Helvetica-Bold"), local("Roboto Bold"), local("Roboto-Bold"); font-weight: 600 900; size-adjust: 106.3%; ascent-override: 87.5%; descent-override: 26.3%; line-gap-override: 0%; }
+@font-face { font-family: "CN Text Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans"), local("Arimo"), local("Helvetica"), local("Roboto"); font-weight: 400 500; size-adjust: 103.3%; ascent-override: 95.8%; descent-override: 30%; line-gap-override: 0%; }
+@font-face { font-family: "CN Text Fallback"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("LiberationSans-Bold"), local("Arimo Bold"), local("Arimo-Bold"), local("Helvetica Bold"), local("Helvetica-Bold"), local("Roboto Bold"), local("Roboto-Bold"); font-weight: 600 900; size-adjust: 100.1%; ascent-override: 98.9%; descent-override: 31%; line-gap-override: 0%; }
 
 :root {
   color-scheme: light;
-  --wp-paper: #f6f2e7; --wp-panel: #fffdf7; --wp-ink: #0e1427; --wp-muted: #4a5a68; --wp-hair: #d6cfbd;
-  --wp-bio: #0db8ab; --wp-cited: #b8eae4; --wp-flag: #f6d2bf; --wp-rust: #9c3f17; --wp-link: #531b6c;
-  --wp-deep: #155967; --wp-focus: #a82b99;
-  --wp-font-display: "Fraunces", Georgia, serif;
-  --wp-font-body: "IBM Plex Sans", Arial, sans-serif;
-  --wp-font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --wp-text-hero: clamp(2.5rem, 5.2vw, 4.5rem);
-  --wp-text-title: clamp(2rem, 3.6vw, 3rem);
+  /* Object Atlas source values */
+  --oa-ground: #151518; --oa-ground-2: #1e1f23; --oa-paper: #e8e9e7; --oa-muted: #b2b4bd; --oa-blue: #b2c8f0;
+  --oa-line: #3c3d45; --oa-sheet: #eff0ec; --oa-blue-deep: #2d4f93;
+  /* The bench (contrast on the panel #f7f7f5): ink 17.1, muted 6.72, rust 6.5, amber 6.39, blue-deep 7.6 */
+  --wp-paper: var(--oa-sheet); --wp-panel: #f7f7f5; --wp-ink: #151518; --wp-muted: #55575f; --wp-hair: #cfd1d6;
+  --wp-rust: #9a3b16; --wp-amber: #7a5300; --wp-focus: var(--oa-blue-deep);
+  /* Product accents. Pale blue and lavender are fills and lines only, never text on the sheet. */
+  --cq-blue-tint: #dde6f6; --cq-lav: #cdc3ea; --cq-lav-deep: #5b4a8f; --cq-rust-tint: #f5e4dc;
+  /* Machined silver */
+  --cq-metal: linear-gradient(180deg, #fbfbfa 0%, #e2e4e7 16%, #b3b7bf 42%, #eef0f1 60%, #989ca6 84%, #c9ccd2 100%);
+  --cq-metal-side: linear-gradient(90deg, #a7abb3 0%, #eceef0 22%, #c3c6cc 48%, #f6f7f7 64%, #9a9ea7 100%);
+  --wp-font-display: "CN Display", "CN Display Fallback", Arial, sans-serif;
+  --wp-font-body: "CN Text", "CN Text Fallback", Arial, sans-serif;
+  --wp-font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --wp-text-hero: clamp(2.5rem, 4.6vw, 4.25rem);
+  --wp-text-title: clamp(1.875rem, 3.4vw, 3rem);
   --wp-text-h3: 1.25rem;
   --wp-text-lede: clamp(1.125rem, 1.6vw, 1.3125rem);
   --wp-text-meta: 0.875rem;
   --wp-text-cite: 0.8125rem;
   --wp-2: 0.5rem; --wp-3: 0.75rem; --wp-4: 1rem; --wp-6: 1.5rem; --wp-8: 2rem; --wp-12: 3rem; --wp-16: 4rem; --wp-24: 6rem;
-  --wp-radius: 4px; --wp-page: 76rem; --wp-gutter: clamp(1.25rem, 4vw, 2.5rem); --wp-tap: 48px;
+  --wp-radius: 4px; --wp-pill: 999px; --wp-page: 80rem; --wp-gutter: clamp(1.25rem, 3.4vw, 3rem); --wp-tap: 48px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { background: var(--wp-paper); color: var(--wp-ink); font: 400 1rem/1.6 var(--wp-font-body); -webkit-text-size-adjust: 100%; scroll-behavior: auto; }
 body { margin: 0; }
-a { color: var(--wp-link); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a { color: var(--wp-ink); text-decoration-color: var(--oa-blue-deep); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--oa-blue-deep); }
 :focus-visible { outline: 3px solid var(--wp-focus); outline-offset: 3px; }
 .wrap { max-width: var(--wp-page); margin: 0 auto; padding: 0 var(--wp-gutter); }
-h1, h2 { font-family: var(--wp-font-display); font-weight: 600; letter-spacing: -0.02em; word-spacing: 0.06em; margin: 0; text-wrap: balance; }
-h1 { font-size: var(--wp-text-hero); line-height: 1.02; }
-h2 { font-size: var(--wp-text-title); line-height: 1.08; }
+h1, h2 { font-family: var(--wp-font-display); font-weight: 500; letter-spacing: -0.035em; margin: 0; text-wrap: balance; }
+h1 { font-size: var(--wp-text-hero); line-height: 0.98; letter-spacing: -0.05em; }
+h2 { font-size: var(--wp-text-title); line-height: 1.04; }
 p { margin: 0; }
 code, pre, .num { font-family: var(--wp-font-mono); font-feature-settings: "zero" 1; }
 code { font-size: 0.9375em; overflow-wrap: anywhere; }
+.sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 .skip { position: absolute; left: -999px; top: 0; }
-.skip:focus { left: var(--wp-4); top: var(--wp-4); z-index: 2; background: var(--wp-panel); padding: var(--wp-3) var(--wp-4); border: 2px solid var(--wp-ink); }
+.skip:focus { left: var(--wp-4); top: var(--wp-4); z-index: 2; background: var(--wp-panel); color: var(--wp-ink); padding: var(--wp-3) var(--wp-4); border: 2px solid var(--wp-ink); }
 
 .label { font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp-muted); }
 .label b { color: var(--wp-ink); font-weight: 500; }
 .label-limit { font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp-rust); margin-right: .5em; }
 .hint { color: var(--wp-muted); font-weight: 400; }
-.hint.block { display: block; }
 
-/* header */
-.site-header { border-bottom: 2px solid var(--wp-ink); }
-.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--wp-6); min-height: 72px; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.0625rem; letter-spacing: -0.01em; min-height: var(--wp-tap); }
-.brand .product { color: var(--wp-muted); font-weight: 400; }
-.brand-link { display: inline-flex; align-items: center; gap: 10px; min-height: var(--wp-tap); color: var(--wp-ink); text-decoration: none; }
-.local-badge { font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid var(--wp-ink); padding: 6px 10px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
-.local-badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--wp-bio); border: 1px solid var(--wp-ink); }
+/* header: the shared graphite field */
+.site-header { background: var(--oa-ground); color: var(--oa-paper); border-bottom: 1px solid var(--oa-line); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--wp-6); min-height: 76px; }
+.site-header :focus-visible, .site-footer :focus-visible { outline-color: var(--oa-blue); }
+.brand { display: flex; align-items: center; gap: 14px; min-height: var(--wp-tap); min-width: 0; }
+.brand-link { display: inline-flex; align-items: center; gap: 8px; min-height: var(--wp-tap); color: var(--oa-paper); text-decoration: none; }
+.brand-link:hover { color: var(--oa-blue); }
+.wordmark { font: 600 1.5rem/1 var(--wp-font-display); letter-spacing: -0.054em; }
+.brand .product { color: var(--oa-muted); font-weight: 500; padding-left: 14px; border-left: 1px solid var(--oa-line); white-space: nowrap; }
+.local-badge { font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--oa-paper); border: 1px solid var(--oa-line); border-radius: var(--wp-pill); padding: 7px 12px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.local-badge::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--oa-blue); }
 
-/* buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: var(--wp-tap); padding: 0 var(--wp-6); border-radius: var(--wp-radius); font: 600 1rem/1.2 var(--wp-font-body); text-decoration: none; cursor: pointer; text-align: center; }
-.btn-primary { background: var(--wp-bio); color: var(--wp-ink); border: 2px solid var(--wp-ink); }
-.btn-primary:hover { background: #0aa598; }
+/* buttons: graphite pill with paper type; hover is blue-deep */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: var(--wp-tap); padding: 0 var(--wp-6); border-radius: var(--wp-pill); font: 600 1rem/1.2 var(--wp-font-body); text-decoration: none; cursor: pointer; text-align: center; }
+.btn-primary { background: var(--wp-ink); color: var(--oa-paper); border: 2px solid var(--wp-ink); }
+.btn-primary:hover { background: var(--oa-blue-deep); border-color: var(--oa-blue-deep); color: #fff; }
 .btn-quiet { background: var(--wp-panel); color: var(--wp-ink); border: 2px solid var(--wp-ink); }
-.btn-quiet:hover { background: var(--wp-paper); }
+.btn-quiet:hover { color: var(--oa-blue-deep); border-color: var(--oa-blue-deep); }
 
-/* hero */
-.hero { padding: var(--wp-16) 0 var(--wp-16); }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: var(--wp-16); align-items: start; }
-.hero-copy { display: grid; gap: var(--wp-6); }
-.hero-copy h1 { max-width: 13ch; }
-.lede { font-size: var(--wp-text-lede); line-height: 1.5; max-width: 34em; }
-.privacy { border-left: 2px solid var(--wp-rust); padding-left: var(--wp-4); max-width: 34em; }
-.terms { display: flex; flex-wrap: wrap; gap: var(--wp-2) var(--wp-6); margin: 0; padding: var(--wp-4) 0 0; border-top: 1px solid var(--wp-hair); list-style: none; color: var(--wp-muted); font-size: var(--wp-text-meta); font-weight: 600; }
+/* the bench: copy and form on the left, the assembly beside them, the result under the form */
+.bench { padding: var(--wp-12) 0 var(--wp-16); background: linear-gradient(180deg, #e7e8e4, var(--wp-paper) 280px); }
+.bench-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: "copy art" "form art" "result art"; grid-template-rows: auto auto 1fr; gap: var(--wp-8) var(--wp-16); align-items: start; }
+.bench-copy { grid-area: copy; display: grid; gap: var(--wp-4); }
+.bench-copy h1 { max-width: 13em; }
+.lede { font-size: var(--wp-text-lede); line-height: 1.5; max-width: 36em; }
+.bench-form { grid-area: form; }
+.assembly-figure { grid-area: art; position: sticky; top: var(--wp-4); }
+.result { grid-area: result; }
+.limit { border-left: 2px solid var(--wp-rust); padding-left: var(--wp-4); font-size: 0.9375rem; line-height: 1.5; max-width: 40em; }
+.limit a { white-space: nowrap; }
 
-/* the rack: four model slots drawn as a pipeline */
-.rack-figure { margin: var(--wp-2) 0 0; background: var(--wp-panel); border: 2px solid var(--wp-ink); padding: var(--wp-6); }
-.rack { list-style: none; margin: var(--wp-4) 0 0; padding: 0; counter-reset: bay; }
-.bay { position: relative; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: var(--wp-3); padding: var(--wp-3) 0 var(--wp-4); }
-.bay + .bay { border-top: 1px solid var(--wp-hair); }
-/* the spine: a line that joins the four numbers, read top to bottom */
-.bay:not(:last-child)::after { content: ""; position: absolute; left: calc(1.125rem - 1px); top: calc(var(--wp-3) + 2.25rem); bottom: calc(-1 * var(--wp-3)); width: 2px; background: var(--wp-ink); }
-.bay .num { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 2px solid var(--wp-ink); border-radius: 50%; background: var(--wp-paper); font: 500 0.9375rem/1 var(--wp-font-mono); position: relative; z-index: 1; }
-.bay:first-child .num { border-style: dashed; }
-.bay-body { display: grid; gap: 2px; min-width: 0; }
-.bay-body b { font-weight: 600; }
-.bay-body i { font-style: normal; font-weight: 400; color: var(--wp-muted); font-size: var(--wp-text-meta); }
-.bay-body code { color: var(--wp-deep); font-size: 0.8125rem; }
-.bay-to { font-size: var(--wp-text-meta); color: var(--wp-muted); }
-.bay-to em { font-style: normal; color: var(--wp-ink); font-weight: 600; }
-.rack-figure figcaption { margin-top: var(--wp-2); padding-top: var(--wp-4); border-top: 1px solid var(--wp-ink); font-size: var(--wp-text-meta); line-height: 1.5; }
-
-/* sections */
-.finding, .tool, .limits { border-top: 2px solid var(--wp-ink); padding: var(--wp-16) 0; }
-.finding { background: var(--wp-panel); }
-.finding .wrap, .limits .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--wp-16); }
-.finding h2, .limits h2 { margin-top: var(--wp-3); font-size: clamp(1.625rem, 2.6vw, 2.25rem); line-height: 1.15; }
-.finding-body { display: grid; gap: var(--wp-4); max-width: 40em; }
-.fix-line { border-left: 2px solid var(--wp-ink); padding-left: var(--wp-4); }
-.fix-line .label, .fix-do .label { color: var(--wp-ink); margin-right: .35em; }
-.upstream { border-left: 2px solid var(--wp-rust); padding-left: var(--wp-4); }
-.upstream .label { color: var(--wp-rust); margin-right: .35em; }
-
-/* the tool */
-.tool-head { display: grid; gap: var(--wp-3); margin-bottom: var(--wp-8); }
-.sub { color: var(--wp-muted); }
-.tool-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--wp-12); align-items: start; }
-form { display: grid; gap: var(--wp-8); min-width: 0; }
-.step { border: 0; border-top: 1px solid var(--wp-ink); margin: 0; padding: var(--wp-4) 0 0; min-width: 0; }
-.step legend { font: 600 var(--wp-text-h3)/1.3 var(--wp-font-body); padding: 0; display: flex; align-items: center; gap: var(--wp-3); float: left; width: 100%; margin-bottom: var(--wp-3); }
-.step legend .hint { font-size: var(--wp-text-meta); }
-.step legend + * { clear: both; }
-.step-num { font: 500 var(--wp-text-cite)/1 var(--wp-font-mono); display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; border: 1px solid var(--wp-ink); border-radius: 50%; flex: none; }
-.field { display: block; margin: var(--wp-4) 0 var(--wp-2); font-weight: 600; clear: both; }
-.field .hint { display: block; font-weight: 400; font-size: 0.9375rem; line-height: 1.5; }
-input, textarea { display: block; width: 100%; min-height: var(--wp-tap); font: inherit; color: var(--wp-ink); background: var(--wp-panel); border: 2px solid var(--wp-ink); border-radius: var(--wp-radius); padding: var(--wp-3); }
-textarea { min-height: 7rem; font: 400 0.875rem/1.45 var(--wp-font-mono); resize: vertical; }
-#workflow { min-height: 9rem; }
-input:focus-visible, textarea:focus-visible { outline-offset: 1px; }
-
-.drop { border: 2px dashed var(--wp-ink); border-radius: var(--wp-radius); background: var(--wp-panel); padding: var(--wp-6) var(--wp-4); display: grid; gap: var(--wp-2); text-align: center; clear: both; }
-.drop.over { background: var(--wp-cited); border-style: solid; }
-.drop-main { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 .4em; }
-.file-btn { position: relative; display: inline-flex; align-items: center; min-height: var(--wp-tap); color: var(--wp-link); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; cursor: pointer; }
-.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; min-height: 0; padding: 0; border: 0; }
+form { display: grid; gap: var(--wp-4); min-width: 0; }
+.drop { border: 2px dashed var(--wp-ink); border-radius: 8px; background: var(--wp-panel); padding: var(--wp-6); display: grid; gap: var(--wp-3); }
+.drop.over { background: var(--cq-blue-tint); border-style: solid; border-color: var(--oa-blue-deep); }
+.pick { display: flex; flex-wrap: wrap; gap: var(--wp-3); }
+.file-btn { position: relative; }
+.file-btn input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 .file-btn:has(input:focus-visible) { outline: 3px solid var(--wp-focus); outline-offset: 3px; }
+#example-note, .drop-status { font-size: 0.9375rem; line-height: 1.5; }
+.drop-status { color: var(--wp-ink); }
+.field { display: block; margin: var(--wp-2) 0 0; font-weight: 600; }
+.field .hint { display: block; font-weight: 400; font-size: 0.9375rem; line-height: 1.5; }
+input:not([type="file"]), textarea { display: block; width: 100%; min-height: var(--wp-tap); font: inherit; color: var(--wp-ink); background: var(--wp-panel); border: 2px solid var(--wp-ink); border-radius: var(--wp-radius); padding: var(--wp-3); }
+textarea { min-height: 7rem; font: 400 0.875rem/1.45 var(--wp-font-mono); resize: vertical; }
+input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset: 1px; }
+.optional { border-top: 1px solid var(--wp-ink); border-bottom: 1px solid var(--wp-hair); }
+.optional summary { cursor: pointer; min-height: var(--wp-tap); display: flex; align-items: center; gap: .35em; font-weight: 600; list-style: none; }
+.optional summary::-webkit-details-marker { display: none; }
+.optional summary::after { content: "+"; margin-left: auto; font: 500 1.25rem/1 var(--wp-font-mono); }
+.optional[open] summary::after { content: "–"; }
+.optional[open] { padding-bottom: var(--wp-4); }
+.optional textarea { margin-top: var(--wp-2); }
+.optional input { margin-top: var(--wp-2); max-width: 12rem; }
 .form-error { color: var(--wp-rust); font-weight: 600; }
 .submit-row { display: flex; flex-wrap: wrap; gap: var(--wp-3); }
 
+/* The assembly: four machined parts pulled apart along one axis. Each has its own shape: a capsule for the
+   optional enhancer, a finned block for the text encoder, the largest chamfered block for the diffusion model,
+   a short disc for the VAE. Static art; nothing moves. */
+.plate { background: linear-gradient(180deg, #e2e4e8, #eceeef 60%, #e6e8eb); border: 1px solid var(--wp-hair); border-radius: 10px; padding: var(--wp-6) var(--wp-6) var(--wp-8); box-shadow: inset 0 1px 0 #fff, 0 18px 30px -26px rgba(21, 21, 24, 0.55); }
+.plate-label { margin-bottom: var(--wp-6); }
+.assembly { --part-w: 9.5rem; --gap: 1.75rem; list-style: none; margin: 0; padding: 0; display: grid; gap: var(--gap); }
+.module { display: grid; grid-template-columns: var(--part-w) minmax(0, 1fr); gap: var(--wp-6); align-items: center; }
+.part { position: relative; display: grid; place-items: center; height: var(--h); }
+.shape { position: absolute; inset: 0; background: var(--cq-metal); border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(21, 21, 24, 0.34), inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 10px 12px -10px rgba(0, 0, 0, 0.6); }
+.m-pe { --h: 2.5rem; }
+.m-te { --h: 3.5rem; }
+.m-dit { --h: 5.25rem; }
+.m-vae { --h: 2.25rem; }
+/* enhancer: a capsule set off the axis, with a lavender band */
+.m-pe .shape { left: 22%; right: 6%; border-radius: var(--wp-pill); background: linear-gradient(90deg, transparent 0 58%, var(--cq-lav) 58% 66%, transparent 66%), var(--cq-metal); }
+.m-pe .lamp { margin-left: 16%; }
+/* text encoder: fins */
+.m-te .shape { left: 8%; right: 8%; background: repeating-linear-gradient(90deg, transparent 0 11px, rgba(21, 21, 24, 0.2) 11px 13px, rgba(255, 255, 255, 0.6) 13px 14px), var(--cq-metal); }
+/* diffusion model: the largest part, chamfered, with a bore. The chamfer is clipped on a child so the
+   parent's drop shadows (edge, depth and the lit ring) are not clipped with it. */
+.m-dit .shape { background: none; box-shadow: none; filter: drop-shadow(0 0 0.6px rgba(21, 21, 24, 0.8)) drop-shadow(0 8px 6px rgba(0, 0, 0, 0.22)); }
+.m-dit .shape::before { content: ""; position: absolute; inset: 0; clip-path: polygon(9% 0, 91% 0, 100% 18%, 100% 82%, 91% 100%, 9% 100%, 0 82%, 0 18%);
+  background: radial-gradient(circle at 50% 50%, transparent 0 21px, rgba(21, 21, 24, 0.35) 21px 23px, rgba(255, 255, 255, 0.7) 23px 24px, transparent 24px), var(--cq-metal-side); }
+/* VAE: a short disc */
+.m-vae .shape { left: 14%; right: 14%; border-radius: 50% / 50%; background: var(--cq-metal); }
+/* the axis between parts: pale blue for the path every image takes, lavender dashes from the enhancer */
+.part::after { content: ""; position: absolute; top: 100%; height: var(--gap); left: calc(50% - 3px); width: 6px; background: var(--oa-blue); border-left: 1px solid var(--oa-blue-deep); border-right: 1px solid var(--oa-blue-deep); }
+.m-pe .part::after { left: calc(64% - 3px); background: repeating-linear-gradient(180deg, var(--cq-lav) 0 5px, transparent 5px 8px); border-color: var(--cq-lav-deep); }
+.m-vae .part::after { display: none; }
+
+.lamp { position: relative; z-index: 1; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font: 500 0.875rem/1 var(--wp-font-mono); color: var(--wp-ink);
+  background: radial-gradient(circle at 50% 35%, #fbfbfa, #d3d5d9); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.8); }
+.m-text { display: grid; gap: 2px; min-width: 0; }
+.m-role { font-weight: 600; line-height: 1.25; }
+.m-role i { font-style: normal; font-weight: 400; color: var(--wp-muted); font-size: var(--wp-text-meta); }
+.m-state { font: 500 0.75rem/1.3 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp-muted); }
+.m-file { font-size: 0.75rem; line-height: 1.35; color: var(--wp-ink); overflow-wrap: anywhere; }
+.m-node { font-size: var(--wp-text-cite); line-height: 1.35; color: var(--wp-muted); }
+
+/* Lit states. Not checked: hollow dashed lamp, the parts a little dim. */
+.idle .shape { opacity: 0.82; }
+.idle .lamp { background: transparent; box-shadow: none; border: 2px dashed #7c7f8a; }
+.idle .m-file { color: var(--wp-muted); }
+.pass .shape { box-shadow: inset 0 0 0 1px rgba(21, 21, 24, 0.34), 0 0 0 3px var(--oa-blue), 0 0 0 4px var(--oa-blue-deep); }
+.m-dit.pass .shape { box-shadow: none; filter: drop-shadow(0 0 0.6px rgba(21, 21, 24, 0.8)) drop-shadow(3px 0 0 var(--oa-blue)) drop-shadow(-3px 0 0 var(--oa-blue)) drop-shadow(0 3px 0 var(--oa-blue)) drop-shadow(0 -3px 0 var(--oa-blue)) drop-shadow(0 0 0.8px var(--oa-blue-deep)); }
+.pass .lamp { background: var(--oa-blue-deep); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45); }
+.pass .lamp::after { content: ""; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: translate(0, -1px) rotate(45deg); }
+.pass .m-state { color: var(--oa-blue-deep); }
+.fail .shape { outline: 3px solid var(--wp-rust); outline-offset: 5px; }
+.fail .lamp { background: var(--wp-rust); color: #fff; font-size: 1.125rem; }
+.fail .lamp::after { content: "×"; }
+.fail .m-state { color: var(--wp-rust); }
+.dormant .shape { outline: 3px dashed var(--wp-rust); outline-offset: 5px; }
+.dormant .lamp { background: #fff; color: var(--wp-rust); border: 2px solid var(--wp-rust); box-shadow: none; }
+.dormant .lamp::after { content: "!"; }
+.dormant .m-state { color: var(--wp-rust); }
+.warn .shape { outline: 2px solid var(--wp-amber); outline-offset: 5px; }
+.warn .lamp { background: var(--wp-amber); color: #fff; }
+.warn .lamp::after { content: "!"; }
+.warn .m-state { color: var(--wp-amber); }
+.absent .shape { opacity: 0.35; }
+.absent .lamp { color: var(--wp-muted); }
+.absent .lamp::after { content: "–"; }
+.missing .shape { background: transparent; box-shadow: none; outline: 2px dashed var(--wp-rust); outline-offset: -2px; }
+.m-dit.missing .shape { filter: none; border-radius: 4px; }
+.m-dit.missing .shape::before { display: none; }
+.m-dit:is(.fail, .dormant, .warn) .shape { border-radius: 8px; }
+.missing .lamp { background: #fff; color: var(--wp-rust); border: 2px dashed var(--wp-rust); box-shadow: none; }
+.missing .lamp::after { content: "?"; }
+.missing .m-state { color: var(--wp-rust); }
+
+.assembly-figure { margin: 0; display: grid; gap: var(--wp-4); }
+.assembly-figure figcaption { display: grid; gap: var(--wp-3); color: var(--wp-muted); font-size: var(--wp-text-meta); line-height: 1.5; }
+.key { display: flex; flex-wrap: wrap; align-items: center; gap: var(--wp-2) var(--wp-6); color: var(--wp-ink); font-weight: 500; }
+.key-item { display: inline-flex; align-items: center; gap: var(--wp-3); white-space: nowrap; }
+.key-path, .key-pe { display: inline-block; width: 22px; height: 6px; border: 1px solid var(--oa-blue-deep); background: var(--oa-blue); }
+.key-pe { border-color: var(--cq-lav-deep); background: repeating-linear-gradient(90deg, var(--cq-lav) 0 5px, transparent 5px 8px); }
+
 /* result */
-.result { background: var(--wp-panel); border: 2px solid var(--wp-ink); padding: var(--wp-6); display: grid; gap: var(--wp-6); min-width: 0; overflow-wrap: anywhere; position: sticky; top: var(--wp-4); }
+.result { background: var(--wp-panel); border: 2px solid var(--wp-ink); border-radius: 8px; padding: var(--wp-6); display: grid; gap: var(--wp-6); min-width: 0; overflow-wrap: anywhere; scroll-margin-top: var(--wp-4); }
 .result:focus { outline: none; }
 .result:focus-visible { outline: 3px solid var(--wp-focus); outline-offset: 3px; }
-.verdict { font: 600 clamp(1.5rem, 2.4vw, 2rem)/1.15 var(--wp-font-display); letter-spacing: -0.02em; }
+.verdict { font: 500 clamp(1.5rem, 2.4vw, 2rem)/1.12 var(--wp-font-display); letter-spacing: -0.035em; }
 .verdict.empty { font: 400 1rem/1.6 var(--wp-font-body); letter-spacing: 0; color: var(--wp-muted); }
 .verdict.bad { color: var(--wp-rust); font-weight: 600; }
 .verdict .of { display: block; font: 400 var(--wp-text-meta)/1.5 var(--wp-font-mono); letter-spacing: 0; margin-top: var(--wp-3); color: var(--wp-muted); }
-.result-h { font: 600 var(--wp-text-h3)/1.3 var(--wp-font-body); margin: 0 0 var(--wp-3); padding-top: var(--wp-4); border-top: 2px solid var(--wp-ink); }
+.result-h { font: 600 var(--wp-text-h3)/1.3 var(--wp-font-body); margin: 0 0 var(--wp-3); padding-top: var(--wp-4); border-top: 1px solid var(--wp-ink); }
 .result-h .hint { font-size: var(--wp-text-meta); color: var(--wp-muted); font-weight: 400; }
 
-/* your four slots, in the rack's order */
-.slots { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 2px solid var(--wp-ink); }
-.slot { display: grid; grid-template-rows: auto 1fr; gap: var(--wp-2); padding: var(--wp-3); min-width: 0; background: var(--wp-paper); }
-.slot + .slot { border-left: 2px solid var(--wp-ink); }
-.slot .num { font: 500 var(--wp-text-cite)/1 var(--wp-font-mono); color: var(--wp-muted); }
-.slot-body { display: grid; gap: var(--wp-2); align-content: start; min-width: 0; }
-.slot-top { display: flex; flex-direction: column; align-items: flex-start; gap: var(--wp-2); }
-.slot-top b { font-weight: 600; font-size: 0.9375rem; line-height: 1.25; }
-.slot-file { font-size: 0.75rem; line-height: 1.35; color: var(--wp-ink); }
-.slot-node { font-size: 0.8125rem; color: var(--wp-muted); }
-.slot.fail { background: var(--wp-flag); }
-.slot.dormant, .slot.warn { background: repeating-linear-gradient(135deg, var(--wp-paper) 0 8px, #efe5d4 8px 16px); }
-.slot.absent .slot-body b { color: var(--wp-muted); }
+.status { font: 500 0.75rem/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 7px; border: 1px solid transparent; border-radius: var(--wp-pill); white-space: nowrap; flex: none; }
+.status.pass { background: var(--cq-blue-tint); color: var(--oa-blue-deep); border-color: var(--oa-blue-deep); }
+.status.fail { background: var(--wp-rust); color: #fff; }
+.status.warn { color: var(--wp-amber); border-color: var(--wp-amber); background: #fff; }
+.status.dormant { color: var(--wp-rust); border: 1px dashed var(--wp-rust); background: #fff; }
+.status.info { color: var(--wp-muted); border-color: var(--wp-hair); background: #fff; }
 
-.status { font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 6px; border: 1px solid transparent; white-space: nowrap; flex: none; }
-.status.pass { background: var(--wp-cited); }
-.status.fail { background: var(--wp-flag); color: var(--wp-ink); border-color: var(--wp-rust); }
-.status.warn { color: var(--wp-rust); border-color: var(--wp-rust); background: var(--wp-panel); }
-.status.dormant { color: var(--wp-rust); border: 1px dashed var(--wp-rust); background: var(--wp-panel); }
-.status.info, .status.absent { color: var(--wp-muted); border-color: var(--wp-hair); background: var(--wp-panel); }
-.status.missing { color: var(--wp-rust); border: 1px dashed var(--wp-rust); }
-
-.fixes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--wp-3); counter-reset: fix; }
-.fix { border: 1px solid var(--wp-ink); background: var(--wp-paper); padding: var(--wp-4); display: grid; gap: var(--wp-2); }
-.fix.fail { border-left: 6px solid var(--wp-rust); }
-.fix.dormant, .fix.warn { border-left: 6px double var(--wp-rust); }
+.fixes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--wp-3); }
+.fix { border: 1px solid var(--wp-ink); border-radius: 6px; background: #fff; padding: var(--wp-4); display: grid; gap: var(--wp-2); }
+.fix.fail { border-left: 4px solid var(--wp-rust); }
+.fix.dormant, .fix.warn { border-left: 4px double var(--wp-rust); }
 .notes .fix { border-color: var(--wp-hair); background: var(--wp-panel); }
 .fix-head { display: flex; align-items: baseline; gap: var(--wp-3); }
 .fix-title { font-weight: 600; line-height: 1.35; }
 .where { font: 400 var(--wp-text-cite)/1.4 var(--wp-font-mono); color: var(--wp-muted); }
 .fix-detail { line-height: 1.55; }
 .fix-do { border-left: 2px solid var(--wp-ink); padding-left: var(--wp-3); line-height: 1.55; }
+.fix-do .label { color: var(--wp-ink); margin-right: .35em; }
 .src summary { cursor: pointer; color: var(--wp-muted); font-size: var(--wp-text-meta); min-height: var(--wp-tap); display: inline-flex; align-items: center; }
 .src ul { margin: var(--wp-2) 0 0; padding-left: var(--wp-6); font-size: var(--wp-text-meta); display: grid; gap: var(--wp-2); }
 .src a { display: inline-block; padding: 2px 0; }
@@ -175,15 +233,15 @@ input:focus-visible, textarea:focus-visible { outline-offset: 1px; }
 .vram table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
 .vram caption { text-align: left; color: var(--wp-muted); font-size: var(--wp-text-meta); padding-bottom: var(--wp-2); }
 .vram th, .vram td { border-bottom: 1px solid var(--wp-hair); padding: var(--wp-2) var(--wp-2) var(--wp-2) 0; text-align: left; vertical-align: top; }
-.vram thead th { border-bottom: 2px solid var(--wp-ink); font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.vram thead th { border-bottom: 1px solid var(--wp-ink); font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .vram .num-col { text-align: center; width: 4.5rem; }
 .vram tbody th { font-weight: 400; }
 .v-label { display: block; font-weight: 600; }
 .v-file { display: block; font: 400 0.75rem/1.4 var(--wp-font-mono); color: var(--wp-muted); overflow-wrap: anywhere; }
 .v-sub { display: block; font: 400 0.75rem/1.4 var(--wp-font-mono); color: var(--wp-muted); }
-.fit { display: inline-block; white-space: nowrap; overflow-wrap: normal; font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 6px; }
-.fit.yes { background: var(--wp-cited); }
-.fit.no { background: var(--wp-flag); outline: 1px solid var(--wp-rust); }
+.fit { display: inline-block; white-space: nowrap; overflow-wrap: normal; font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 6px; border-radius: var(--wp-radius); }
+.fit.yes { background: var(--cq-blue-tint); }
+.fit.no { background: var(--cq-rust-tint); outline: 1px solid var(--wp-rust); }
 .fit.unknown { color: var(--wp-muted); }
 .vram-note { margin-top: var(--wp-3); font-size: var(--wp-text-meta); line-height: 1.5; }
 .measured { margin-top: var(--wp-4); padding-top: var(--wp-3); border-top: 1px solid var(--wp-hair); }
@@ -194,39 +252,66 @@ input:focus-visible, textarea:focus-visible { outline-offset: 1px; }
 .passes { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--wp-hair); }
 .passes li { padding: var(--wp-2) 0; border-bottom: 1px solid var(--wp-hair); display: flex; gap: var(--wp-2); align-items: baseline; }
 
+/* the template finding: status and fix in view, the history behind a disclosure */
+.finding, .limits { border-top: 1px solid var(--wp-ink); padding: var(--wp-16) 0; }
+.finding .wrap, .limits .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--wp-16); }
+.finding h2, .limits h2 { margin-top: var(--wp-3); font-size: clamp(1.625rem, 2.6vw, 2.25rem); line-height: 1.12; }
+.finding-body { display: grid; gap: var(--wp-4); max-width: 40em; }
+.fix-line { border-left: 2px solid var(--wp-ink); padding-left: var(--wp-4); }
+.fix-line .label { color: var(--wp-ink); margin-right: .35em; }
+.upstream { border-left: 2px solid var(--oa-blue-deep); padding-left: var(--wp-4); }
+.upstream .label { color: var(--oa-blue-deep); margin-right: .35em; }
+.evidence { border-top: 1px solid var(--wp-ink); border-bottom: 1px solid var(--wp-hair); }
+.evidence summary { cursor: pointer; min-height: var(--wp-tap); display: flex; align-items: center; gap: var(--wp-3); font-weight: 600; list-style: none; padding: var(--wp-2) 0; }
+.evidence summary::-webkit-details-marker { display: none; }
+.evidence summary::after { content: "+"; margin-left: auto; font: 500 1.25rem/1 var(--wp-font-mono); }
+.evidence[open] summary::after { content: "–"; }
+.evidence-body { display: grid; gap: var(--wp-4); padding: var(--wp-2) 0 var(--wp-6); }
+
 /* limits */
 .cannot-see { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--wp-ink); max-width: 40em; }
 .cannot-see li { padding: var(--wp-3) 0 var(--wp-3) var(--wp-6); border-bottom: 1px solid var(--wp-hair); position: relative; }
 .cannot-see li::before { content: "—"; position: absolute; left: 0; color: var(--wp-muted); }
 .after-list { margin-top: var(--wp-4); font-weight: 600; max-width: 40em; }
 
-/* footer */
-.site-footer { border-top: 2px solid var(--wp-ink); padding: var(--wp-8) 0 var(--wp-12); }
+/* footer: the shared graphite field */
+.site-footer { background: var(--oa-ground); color: var(--oa-paper); border-top: 1px solid var(--oa-line); padding: var(--wp-8) 0 var(--wp-12); }
 .site-footer .wrap { display: grid; gap: var(--wp-2); }
-.site-footer .muted { color: var(--wp-muted); font-size: var(--wp-text-meta); max-width: 60em; }
+.site-footer a { color: var(--oa-paper); text-decoration-color: var(--oa-blue); }
+.site-footer a:hover { color: var(--oa-blue); }
+.site-footer .muted { color: var(--oa-muted); font-size: var(--wp-text-meta); max-width: 60em; }
 
-@media (max-width: 1100px) {
-  .slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .slot + .slot { border-left: 0; }
-  .slot:nth-child(even) { border-left: 2px solid var(--wp-ink); }
-  .slot:nth-child(n+3) { border-top: 2px solid var(--wp-ink); }
-}
 @media (max-width: 900px) {
-  .hero { padding: var(--wp-12) 0; }
-  .hero .wrap, .finding .wrap, .limits .wrap, .tool-grid { grid-template-columns: minmax(0, 1fr); gap: var(--wp-8); }
-  .finding, .tool, .limits { padding: var(--wp-12) 0; }
-  .result { position: static; }
+  .bench { padding: var(--wp-8) 0 var(--wp-12); }
+  .bench-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "form" "art" "result"; grid-template-rows: none; gap: var(--wp-8); }
+  .assembly-figure { position: static; }
+  .finding .wrap, .limits .wrap { grid-template-columns: minmax(0, 1fr); gap: var(--wp-8); }
+  .finding, .limits { padding: var(--wp-12) 0; }
 }
 @media (max-width: 600px) {
+  .site-header .wrap { min-height: 64px; gap: var(--wp-3); }
+  .wordmark { font-size: 1.3125rem; }
+  .brand-link img { width: 30px; height: 30px; }
+  .brand { gap: 10px; }
   .brand .product { display: none; }
-  .local-badge { font-size: 0.75rem; padding: 6px 8px; white-space: normal; max-width: 9.5rem; line-height: 1.25; }
+  .local-badge { font-size: 0.75rem; padding: 6px 10px; }
+  .badge-more { display: none; }
+  .drop { padding: var(--wp-4); }
+  .pick .btn, .submit-row .btn { width: 100%; }
+  .plate { padding: var(--wp-4) var(--wp-4) var(--wp-6); }
+  .assembly { --part-w: 6.25rem; --gap: 1.5rem; }
+  .module { gap: var(--wp-4); }
+  .m-dit { --h: 4.5rem; }
+  .m-dit .shape::before { background: radial-gradient(circle at 50% 50%, transparent 0 15px, rgba(21, 21, 24, 0.35) 15px 17px, rgba(255, 255, 255, 0.7) 17px 18px, transparent 18px), var(--cq-metal-side); }
+  .m-node, .assembly-figure figcaption, .src summary, .vram caption, .vram-note, .measured .hint, .site-footer .muted, .limit, #example-note, .drop-status { font-size: 1rem; }
+  .m-file, .v-sub, .where { font-size: 0.875rem; }
   .v-file { display: none !important; }
   .vram .num-col { width: 3.25rem; }
-  .submit-row .btn, .actions .btn { width: 100%; }
-  .result, .rack-figure { padding: var(--wp-4); }
-  .terms, .rack-figure figcaption, .bay-to, .slot-node, .src summary, .vram caption, .vram-note, .measured .hint, .site-footer .muted, .step legend .hint { font-size: 1rem; }
-  .bay-body code, .slot-file, .v-sub, .where { font-size: 0.875rem; }
   .fit { padding: 3px 4px; }
   .vram th, .vram td { padding-right: 4px; }
+  .result { padding: var(--wp-4); }
   .fix-head { flex-direction: column; gap: var(--wp-2); }
+}
+@media (max-width: 340px) {
+  .local-badge { display: none; }
 }

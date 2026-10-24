@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>First check · Qwen-Image 2.1 preflight · CyberNative</title>
+  <link rel="icon" href="assets/cybernative-cn-mark.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/Syne-Display-Latin1-500-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/DMSans-Text-Latin1-400-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="first-use.css">
+</head>
+<body class="first-use">
+  <a class="skip" href="#first-check">Skip to the first check</a>
+  <header class="site-header">
+    <div class="wrap">
+      <span class="brand"><a class="brand-link" href="https://cybernative.ai/" aria-label="CyberNative home"><img src="assets/cn-mark-header.svg" alt="" width="32" height="32"><span class="wordmark">cybernative</span></a> <a class="product" href="index.html">Qwen-Image 2.1 preflight</a></span>
+      <span class="local-badge">Runs offline<span class="badge-more"> in this tab</span></span>
+    </div>
+  </header>
+  <main id="first-check" class="guide wrap">
+    <div class="guide-intro">
+      <p class="label"><b>First use</b> · no ComfyUI run needed</p>
+      <h1>One broken prompt.<br>Two settings to fix.</h1>
+      <p class="lede">Try a known problem before checking your own workflow. These two files show the same Image Edit graph before and after its prompt enhancer gets the system prompt.</p>
+      <p class="limit"><span class="label-limit">Sample only</span> These are public-template derivatives with a synthetic prompt and placeholder image names. Use them in this checker, not as a ready-to-run image workflow. No models or images are included.</p>
+      <a class="btn btn-primary" href="index.html#check">Open the checker</a>
+    </div>
+
+    <ol class="rehearsal">
+      <li>
+        <div class="guide-step"><span class="num">01</span><h2>See the failure</h2></div>
+        <div class="guide-body">
+          <p><a href="fixtures/first-use/broken.api.json" download>Download broken.api.json</a>. <a href="index.html#check">In the checker</a>, open “Your model files and ComfyUI version”, enter <b>0.38.0</b> in “ComfyUI version” and leave the file listing empty. Then choose the downloaded file. Choosing it runs the check.</p>
+          <div class="expected broken"><p class="label">Expected result</p><p><b>1 thing to fix before you run this.</b></p><p>Fix: “The edit PE runs without its system prompt”. Node <code>#459:500 TextGenerate</code>.</p></div>
+          <p>The fix list asks for both changes: connect the PE-I2I system prompt to <code>system_prompt</code>, and turn <code>use_default_template</code> on. Connecting the prompt alone still drops it.</p>
+        </div>
+      </li>
+      <li>
+        <div class="guide-step"><span class="num">02</span><h2>Check the repair</h2></div>
+        <div class="guide-body">
+          <p><a href="fixtures/first-use/corrected.api.json" download>Download corrected.api.json</a>. Choose it in the same checker with version <b>0.38.0</b>. Only those two settings change.</p>
+          <div class="expected corrected"><p class="label">Expected result</p><p><b>Nothing to fix in what this page can check.</b></p><p>The system-prompt fix disappears. “Checked and fine” now includes the edit PE getting its system prompt.</p></div>
+          <p>Both files have one note: “max_length is 16256; Qwen's runner uses 24,000”. Image Edit’s token budget is not measured here. The note is not a failed check.</p>
+          <p>Each result says <b>API-format workflow · 20 nodes · ComfyUI 0.38.0</b>. <a href="fixtures/first-use/broken.expected.json" download>Full broken result</a> · <a href="fixtures/first-use/corrected.expected.json" download>Full corrected result</a>.</p>
+        </div>
+      </li>
+      <li>
+        <div class="guide-step"><span class="num">03</span><h2>Use your own export</h2></div>
+        <div class="guide-body">
+          <p>In ComfyUI, choose <b>Workflow › Export</b> or <b>Export (API)</b>. Choose the resulting <code>.json</code> file in the checker. Replace the sample version with your installed version from Settings › About.</p>
+          <p>Your export stays in the checker tab. A clear result covers only what the workflow and filenames reveal; it does not prove model files are installed, that an image will look right, or that the graph fits in VRAM.</p>
+        </div>
+      </li>
+    </ol>
+
+    <section class="guide-help" aria-labelledby="help-title">
+      <h2 id="help-title">Stuck at the first file?</h2>
+      <dl>
+        <dt>The download opens as text</dt><dd>Copy the complete JSON into “Workflow JSON”, then press “Check workflow”. The expected results above use an empty optional listing and version 0.38.0.</dd>
+        <dt>“Drop, choose or paste a workflow first.”</dt><dd>No workflow was loaded. Choose the downloaded <code>.json</code> file or paste the full export.</dd>
+        <dt>“This is not valid JSON …”</dt><dd>Export again from ComfyUI. Use the JSON file, not a PNG, a screenshot or a copied fragment. Do not send your private export to troubleshoot this.</dd>
+        <dt>“This JSON is not a ComfyUI workflow.”</dt><dd>A model configuration or settings file is different. Use Workflow › Export or Export (API).</dd>
+        <dt>The corrected sample still has fixes</dt><dd>Choose <code>corrected.api.json</code> again, clear the optional listing, and set version to 0.38.0. A previous listing or an older version changes the result.</dd>
+      </dl>
+    </section>
+
+    <section class="guide-help" aria-labelledby="report-title">
+      <h2 id="report-title">Tell us if it helped. Optional.</h2>
+      <p>Use <a href="mailto:hello@cybernative.ai?subject=Qwen%20workflow%20check%20feedback">hello@cybernative.ai</a> if you want to report a result. Sending email is your choice; the checker sends nothing. Email shares your address and the text you choose to send.</p>
+      <p>Write just: “Sample rehearsal” or “My workflow”; “found a problem”, “fixed my problem”, or “checker problem”; the finding title; and your ComfyUI version if relevant. A sample rehearsal is not a report of fixing your own workflow.</p>
+      <p><b>Leave out workflow files, prompts, images, screenshots, logs, folder listings and personal paths.</b> Describe a checker problem using these public sample files where possible.</p>
+    </section>
+    <p class="guide-provenance">The samples derive from the Comfy Org Image Edit template exported by ComfyUI 0.38.0, under the <a href="fixtures/first-use/LICENSE.txt">MIT License, © Comfy Org</a>. They demonstrate one wiring mistake and its repair. The official templates shipped this wiring in templates package 0.11.70; the fix was released in 0.11.73 (0.11.76 checked), but a workflow saved from 0.11.70 keeps the old wiring. <a href="fixtures/first-use/README.md">Fixture provenance and exact inputs</a>.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Prepared by <a href="https://cybernative.ai/">CyberNative AI LLC</a>, an AI-run company, using AI agents.</p>
+      <p>An independent free tool by CyberNative. Not affiliated with Qwen, Alibaba Cloud or Comfy Org.</p>
+    </div>
+  </footer>
+</body>
+</html>

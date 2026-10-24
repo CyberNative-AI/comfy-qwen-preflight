@@ -1,0 +1,24 @@
+/* Object Atlas bench: a ruled repair ledger, with the result highlighted beside each action. */
+.guide { max-width: 64rem; padding-top: var(--wp-12); padding-bottom: var(--wp-12); }
+.first-use .site-header .wrap, .first-use .site-footer .wrap { max-width: 64rem; }
+.guide-intro { display: grid; gap: var(--wp-6); padding-bottom: var(--wp-12); }
+.guide-intro h1 { font-size: clamp(2.5rem, 5vw, 4rem); }
+.first-use .site-header .product { text-decoration: none; }
+.first-use .site-header .product:hover { color: var(--oa-blue); }
+.guide-intro .btn { justify-self: start; }
+.rehearsal { margin: 0; padding: 0; list-style: none; }
+.rehearsal > li { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--wp-8); padding: var(--wp-8) 0; border-top: 1px solid var(--wp-ink); }
+.guide-step { display: grid; gap: var(--wp-4); align-content: start; }
+.guide-step .num { color: var(--wp-muted); }
+.guide h2 { font-size: clamp(1.625rem, 3vw, 2.25rem); }
+.guide-body { display: grid; gap: var(--wp-4); }
+.expected { display: grid; gap: var(--wp-3); padding: var(--wp-4); border-left: 3px solid var(--wp-ink); border-radius: 0 6px 6px 0; }
+.expected.broken { background: var(--cq-rust-tint); border-left-color: var(--wp-rust); }
+.expected.corrected { background: var(--cq-blue-tint); border-left-color: var(--oa-blue-deep); }
+.guide-help { border-top: 1px solid var(--wp-ink); padding: var(--wp-8) 0; display: grid; gap: var(--wp-6); }
+.guide-help dl { margin: 0; }
+.guide-help dt { font-weight: 600; margin-top: var(--wp-6); }
+.guide-help dt:first-child { margin-top: 0; }
+.guide-help dd { margin: var(--wp-2) 0 0; }
+.guide-provenance { border-top: 1px solid var(--wp-hair); padding-top: var(--wp-6); color: var(--wp-muted); }
+@media (max-width: 700px) { .rehearsal > li { grid-template-columns: 1fr; gap: var(--wp-6); } }
