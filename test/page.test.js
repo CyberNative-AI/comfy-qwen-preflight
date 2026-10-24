@@ -422,7 +422,10 @@ test('C1: the page opens on the example drawn exactly as "Try the example" draws
   const opened = await drawing();
   assert.equal(opened[0], 'Example · official template · 1 to fix');
   assert.deepEqual(await page.$$eval('#assembly-caption .cap-seg', s => s.map(e => e.textContent)), ['Example', '· official template', '· 1 to fix'], 'the caption wraps only at a separator');
-  assert.match(await page.textContent('#sample-label'), /^Example result · lit on the drawing$/);
+  assert.match(await page.textContent('#sample-label'), /^Example result · slot to fix lit red$/);
+  // All four slots are lit; only the one to fix is lit red (rust), with its × lamp and "Fix".
+  assert.deepEqual(await page.$$eval('#slots .module', ms => ms.map(m => m.classList.contains('fail'))), [true, false, false, false], 'the example has exactly one slot to fix');
+  assert.equal(await page.$eval('#slots .fail .lamp', l => getComputedStyle(l).backgroundColor), await page.evaluate(() => { const d = document.createElement('i'); d.style.color = 'var(--wp-rust)'; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; }));
   assert.equal(await page.getAttribute('#example', 'class'), 'btn btn-primary', 'the example is the filled button');
   assert.match(await page.getAttribute('label.file-btn', 'class'), /\bbtn-quiet\b/, 'the picker is the outline button');
   assert.ok(await page.evaluate(() => document.getElementById('example').compareDocumentPosition(document.getElementById('file')) & Node.DOCUMENT_POSITION_FOLLOWING), 'the example comes first');
