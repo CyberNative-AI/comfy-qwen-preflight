@@ -98,9 +98,11 @@ function setModule(li, status, files, emptyText) {
   if (!files.length && emptyText) text.append(el('span', 'm-node', emptyText));
 }
 
+// Each "·" part is its own inline block, so a narrow caption wraps only at a separator.
 function setCaption(whose, state) {
   byId('assembly-whose').textContent = whose;
-  byId('assembly-state').textContent = state;
+  const parts = state.split(' · ').map(s => el('span', 'cap-seg', `· ${s}`));
+  byId('assembly-state').replaceChildren(...parts.flatMap((p, i) => i ? [' ', p] : [p]));
 }
 
 function resetModules(reason) {

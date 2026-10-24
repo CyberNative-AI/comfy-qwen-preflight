@@ -310,7 +310,7 @@ test('first screen: an example result, the maker and a 48 px upload target; the 
     // version note (both clauses, so a reader who follows it alone does not keep the bug).
     assert.equal(real.slots[0].status, 'fail');
     assert.match(await page.textContent('.m-pe .m-role'), /^Prompt enhancer/);
-    assert.equal(await page.textContent('#sample-result .sample-verdict'), `Found Prompt enhancer: ${fix.title}`);
+    assert.equal(await page.textContent('#sample-result .sample-verdict'), `Found Prompt enhancer (PE): ${fix.title}`);
     const firstSentence = fix.fix.slice(0, fix.fix.indexOf('. ') + 1).replace(' (ComfyUI 0.38.0+)', '');
     assert.match(firstSentence, /, and turn use_default_template on\.$/);
     assert.equal((await page.textContent('#sample-result .sample-fix')).replace(/^Fix\s*/, ''), firstSentence);
@@ -418,9 +418,10 @@ test('with JavaScript off the page explains why it cannot check, and hides the f
 
 test('C1: the page opens on the example drawn exactly as "Try the example" draws it; a reader\'s file replaces it', async () => {
   const { page, errors } = await open(1440);
-  const drawing = () => page.evaluate(() => [document.getElementById('assembly-caption').textContent, document.getElementById('slots').innerHTML]);
+  const drawing = () => page.evaluate(() => [document.getElementById('assembly-caption').textContent, document.getElementById('slots').innerHTML, document.getElementById('assembly-caption').innerHTML]);
   const opened = await drawing();
   assert.equal(opened[0], 'Example · official template · 1 to fix');
+  assert.deepEqual(await page.$$eval('#assembly-caption .cap-seg', s => s.map(e => e.textContent)), ['Example', '· official template', '· 1 to fix'], 'the caption wraps only at a separator');
   assert.match(await page.textContent('#sample-label'), /^Example result · lit on the drawing$/);
   assert.equal(await page.getAttribute('#example', 'class'), 'btn btn-primary', 'the example is the filled button');
   assert.match(await page.getAttribute('label.file-btn', 'class'), /\bbtn-quiet\b/, 'the picker is the outline button');

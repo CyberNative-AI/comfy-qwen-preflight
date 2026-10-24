@@ -35,8 +35,8 @@
           <p class="lede">Some wiring mistakes run without an error and still change your images. Add your exported workflow and get a short list of what to fix.</p>
           <div class="sample" id="sample-result" role="group" aria-labelledby="sample-label">
             <p class="sample-tag" id="sample-label">Example result <span>· lit on the drawing</span></p>
-            <p class="sample-verdict"><span class="sample-key">Found</span> Prompt enhancer: The edit PE runs without its system prompt</p>
-            <p class="sample-fix"><span class="sample-key">Fix</span> Connect a String (Multiline) node holding the PE-I2I system_prompt.txt to the system_prompt input, and turn use_default_template on.</p>
+            <p class="sample-verdict"><span class="sample-key">Found</span> Prompt enhancer (PE): The edit PE runs without its system prompt</p>
+            <p class="sample-fix"><span class="sample-key">Fix</span> Connect a String (Multiline) node holding the edit PE's system_prompt.txt to the system_prompt input, and turn use_default_template on.</p>
           </div>
         </div>
 
@@ -79,7 +79,7 @@
         <div class="art">
         <figure class="assembly-figure" id="assembly" aria-labelledby="assembly-caption" aria-describedby="assembly-note">
           <div class="plate">
-            <p class="label plate-label" id="assembly-caption"><b id="assembly-whose">Example</b> · <span id="assembly-state">official template · 1 to fix</span></p>
+            <p class="label plate-label" id="assembly-caption"><b class="cap-seg" id="assembly-whose">Example</b> <span id="assembly-state"><span class="cap-seg">· official template</span> <span class="cap-seg">· 1 to fix</span></span></p>
             <ol class="assembly" id="slots">
               <li class="module m-pe slot fail" data-stage="pe">
                 <span class="part" aria-hidden="true"><span class="shape"></span><span class="lamp"></span></span>

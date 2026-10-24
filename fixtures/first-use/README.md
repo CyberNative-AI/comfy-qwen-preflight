@@ -11,7 +11,7 @@ The only differences between the pair are at node `459:500`:
 - Broken: `system_prompt` input absent; `use_default_template: false`.
 - Corrected: `system_prompt: ["459:479", 0]`; `use_default_template: true`.
 
-Exact inputs: workflow file as text, empty optional model-file listing, ComfyUI version `0.38.0`. The `.expected.json` files hold the full deterministic output of the checker engine (unchanged since `fc84daa`), including slots, findings, pass list and weights-only VRAM plan. They are results of a static check, not GPU runs or image-quality evidence.
+Exact inputs: workflow file as text, empty optional model-file listing, ComfyUI version `0.38.0`. The `.expected.json` files hold the full deterministic output of the checker engine (unchanged since `fc84daa` apart from the wording of one fix sentence), including slots, findings, pass list and weights-only VRAM plan. They are results of a static check, not GPU runs or image-quality evidence.
 
 Broken: fail 1, warn 0, dormant 0, info 1, pass 3. Finding `pe.no-system` fails. Corrected: fail 0, warn 0, dormant 0, info 1, pass 4. `pe.no-system` disappears and `pe.ok.459:500` passes. Both retain the informational `pe.max-tokens` finding: Image Edit's budget is unmeasured here.
 

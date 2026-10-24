@@ -23,7 +23,7 @@
       "node": "#459:500 TextGenerate",
       "title": "The edit PE runs without its system prompt",
       "detail": "Nothing supplies Qwen's system prompt to this Generate Text node. Qwen's own runner refuses to start without it, and the PE was trained with it. Without it the PE still writes a prompt, but a different one: in our test of the official Text to Image template it came out 22–39% shorter.",
-      "fix": "Connect a String (Multiline) node holding the PE-I2I system_prompt.txt to the system_prompt input (ComfyUI 0.38.0+), and turn use_default_template on. It is off here, and connecting the prompt alone still drops it. On 0.37, start the prompt with <|im_start|>system, then the system prompt, then <|im_end|>, then the user turn."
+      "fix": "Connect a String (Multiline) node holding the edit PE's system_prompt.txt to the system_prompt input (ComfyUI 0.38.0+), and turn use_default_template on. It is off here, and connecting the prompt alone still drops it. On 0.37, start the prompt with <|im_start|>system, then the system prompt, then <|im_end|>, then the user turn."
     },
     {
       "status": "info",
