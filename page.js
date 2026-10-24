@@ -124,7 +124,7 @@ function render(r) {
 
   // Slots, lit on the drawing in its order: enhancer, text encoder, diffusion model, VAE.
   r.slots.forEach((s, i) => setModule(modules[i], s.status, s.files.map(f => [f.name, f.node]), s.optional ? 'Not in this workflow' : 'No loader found'));
-  byId('assembly-state').textContent = 'as your workflow fills them' + (fail ? ` · ${fail} to fix, listed below` : dormant ? ` · ${dormant} when switched on, below` : '');
+  byId('assembly-state').textContent = 'as your workflow fills them · ' + (fail || !dormant ? `${fail} to fix` : `${dormant} when switched on`);
 
   const alarms = r.findings.filter(f => ['fail', 'dormant', 'warn'].includes(f.status));
   const notes = r.findings.filter(f => f.status === 'info');

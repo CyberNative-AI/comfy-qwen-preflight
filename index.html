@@ -38,7 +38,7 @@
           <div class="nojs">
             <p class="label"><b>JavaScript is off</b></p>
             <p>The check runs as a script in this tab, so it cannot run here. Nothing is lost: your workflow was never sent anywhere.</p>
-            <p>Turn JavaScript on for this page to check a workflow. The four slots it checks are drawn beside this note, and the template finding and limits are below.</p>
+            <p>Turn JavaScript on for this page to check a workflow. The four slots it checks, the template finding and the limits are further down this page.</p>
           </div>
         </noscript>
 
@@ -58,7 +58,7 @@
           <textarea id="workflow" spellcheck="false" autocomplete="off" placeholder='{"nodes": [ … ], "links": [ … ] }   or   {"3": {"class_type": "KSampler", … }}'></textarea>
 
           <details class="optional" id="optional">
-            <summary>Your model files and ComfyUI version <span class="hint">· optional</span></summary>
+            <summary><span class="sum-text">Your model files and ComfyUI version <span class="hint">optional</span></span></summary>
             <label class="field" for="listing">Model files or startup log<span class="hint">Paste a folder listing (for example the output of <code>ls -R models</code> or <code>dir /s models</code>), file names, or the startup line “ComfyUI version: …”. This finds files in the wrong folder and checks your version.</span></label>
             <textarea id="listing" spellcheck="false" autocomplete="off" placeholder="models/text_encoders/qwen3vl_8b_int8_convrot.safetensors&#10;models/diffusion_models/qwen-image-2.1-Q4_K_M.gguf&#10;ComfyUI version: 0.38.0"></textarea>
             <label class="field" for="version">ComfyUI version<span class="hint">If it is not in the log above. Settings › About shows it.</span></label>
@@ -70,7 +70,8 @@
           <p class="limit"><span class="label-limit">Limit</span> It reads the workflow and file names only. It cannot see launch flags, your hardware, memory use while ComfyUI runs, or image quality. <a href="#limits">What a workflow file cannot tell us</a></p>
         </form>
 
-        <figure class="assembly-figure" id="assembly" aria-labelledby="assembly-caption">
+        <div class="art">
+        <figure class="assembly-figure" id="assembly" aria-labelledby="assembly-caption" aria-describedby="assembly-note">
           <div class="plate">
             <p class="label plate-label" id="assembly-caption"><b>Four files</b> · <span id="assembly-state">not checked yet</span></p>
             <ol class="assembly" id="slots">
@@ -92,11 +93,12 @@
               </li>
             </ol>
           </div>
-          <figcaption>
-            <p class="key"><span class="key-item"><span class="key-path" aria-hidden="true"></span>The path every image takes</span> <span class="key-item"><span class="key-pe" aria-hidden="true"></span>The optional enhancer</span></p>
-            <p>The enhancer and the text encoder both load through CLIPLoader from models/text_encoders/. Only the text encoder feeds the image encoder; the enhancer’s output becomes your prompt. Swap them and ComfyUI still runs, but the images come out garbled.</p>
-          </figcaption>
         </figure>
+        <div class="assembly-key">
+          <p class="key"><span class="key-item"><span class="key-path" aria-hidden="true"></span>The path every image takes</span> <span class="key-item"><span class="key-pe" aria-hidden="true"></span>The optional enhancer</span></p>
+          <p id="assembly-note">The enhancer and the text encoder both load through CLIPLoader from models/text_encoders/. Only the text encoder feeds the image encoder; the enhancer’s output becomes your prompt. Swap them and ComfyUI still runs, but the images come out garbled.</p>
+        </div>
+        </div>
 
         <section class="result" id="result" aria-live="polite" aria-labelledby="verdict" tabindex="-1">
           <p class="verdict empty" id="verdict">Your result appears here: a fix list, the four slots lit on the drawing, a VRAM plan and everything that passed.</p>

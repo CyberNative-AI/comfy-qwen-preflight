@@ -89,7 +89,7 @@ code { font-size: 0.9375em; overflow-wrap: anywhere; }
 .bench-copy h1 { max-width: 13em; }
 .lede { font-size: var(--wp-text-lede); line-height: 1.5; max-width: 36em; }
 .bench-form { grid-area: form; }
-.assembly-figure { grid-area: art; position: sticky; top: var(--wp-4); }
+.art { grid-area: art; position: sticky; top: var(--wp-4); display: grid; gap: var(--wp-4); }
 .result { grid-area: result; }
 .limit { border-left: 2px solid var(--wp-rust); padding-left: var(--wp-4); font-size: 0.9375rem; line-height: 1.5; max-width: 40em; }
 .limit a { white-space: nowrap; }
@@ -109,9 +109,11 @@ input:not([type="file"]), textarea { display: block; width: 100%; min-height: va
 textarea { min-height: 7rem; font: 400 0.875rem/1.45 var(--wp-font-mono); resize: vertical; }
 input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset: 1px; }
 .optional { border-top: 1px solid var(--wp-ink); border-bottom: 1px solid var(--wp-hair); }
-.optional summary { cursor: pointer; min-height: var(--wp-tap); display: flex; align-items: center; gap: .35em; font-weight: 600; list-style: none; }
+.optional summary { cursor: pointer; min-height: var(--wp-tap); display: flex; align-items: flex-start; gap: var(--wp-4); padding: var(--wp-3) 0; font-weight: 600; line-height: 1.5; list-style: none; }
+.sum-text { min-width: 0; }
+.sum-text .hint { display: block; font-size: var(--wp-text-meta); line-height: 1.5; }
 .optional summary::-webkit-details-marker { display: none; }
-.optional summary::after { content: "+"; margin-left: auto; font: 500 1.25rem/1 var(--wp-font-mono); }
+.optional summary::after { content: "+"; flex: none; margin-left: auto; font: 500 1.25rem/1.5rem var(--wp-font-mono); }
 .optional[open] summary::after { content: "–"; }
 .optional[open] { padding-bottom: var(--wp-4); }
 .optional textarea { margin-top: var(--wp-2); }
@@ -123,11 +125,12 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
    optional enhancer, a finned block for the text encoder, the largest chamfered block for the diffusion model,
    a short disc for the VAE. Static art; nothing moves. */
 .plate { background: linear-gradient(180deg, #e2e4e8, #eceeef 60%, #e6e8eb); border: 1px solid var(--wp-hair); border-radius: 10px; padding: var(--wp-6) var(--wp-6) var(--wp-8); box-shadow: inset 0 1px 0 #fff, 0 18px 30px -26px rgba(21, 21, 24, 0.55); }
-.plate-label { margin-bottom: var(--wp-6); }
+.plate-label { margin-bottom: var(--wp-6); text-wrap: balance; }
 .assembly { --part-w: 9.5rem; --gap: 1.75rem; list-style: none; margin: 0; padding: 0; display: grid; gap: var(--gap); }
-.module { display: grid; grid-template-columns: var(--part-w) minmax(0, 1fr); gap: var(--wp-6); align-items: center; }
-.part { position: relative; display: grid; place-items: center; height: var(--h); }
-.shape { position: absolute; inset: 0; background: var(--cq-metal); border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(21, 21, 24, 0.34), inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 10px 12px -10px rgba(0, 0, 0, 0.6); }
+.module { position: relative; display: grid; grid-template-columns: var(--part-w) minmax(0, 1fr); gap: var(--wp-6); align-items: center; }
+/* The part fills its row so the axis can run row to row; the shape sits centred on it at its own height. */
+.part { position: relative; display: grid; place-items: center; align-self: stretch; min-height: var(--h); }
+.shape { position: absolute; left: 0; right: 0; top: calc(50% - var(--h) / 2); height: var(--h); background: var(--cq-metal); border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(21, 21, 24, 0.34), inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 10px 12px -10px rgba(0, 0, 0, 0.6); }
 .m-pe { --h: 2.5rem; }
 .m-te { --h: 3.5rem; }
 .m-dit { --h: 5.25rem; }
@@ -144,10 +147,16 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
   background: radial-gradient(circle at 50% 50%, transparent 0 21px, rgba(21, 21, 24, 0.35) 21px 23px, rgba(255, 255, 255, 0.7) 23px 24px, transparent 24px), var(--cq-metal-side); }
 /* VAE: a short disc */
 .m-vae .shape { left: 14%; right: 14%; border-radius: 50% / 50%; background: var(--cq-metal); }
-/* the axis between parts: pale blue for the path every image takes, lavender dashes from the enhancer */
-.part::after { content: ""; position: absolute; top: 100%; height: var(--gap); left: calc(50% - 3px); width: 6px; background: var(--oa-blue); border-left: 1px solid var(--oa-blue-deep); border-right: 1px solid var(--oa-blue-deep); }
-.m-pe .part::after { left: calc(64% - 3px); background: repeating-linear-gradient(180deg, var(--cq-lav) 0 5px, transparent 5px 8px); border-color: var(--cq-lav-deep); }
-.m-vae .part::after { display: none; }
+/* One pale-blue axis runs behind the text encoder, diffusion model and VAE, centre to centre, through the row
+   gaps. The lavender dashed branch drops from the enhancer capsule and ends on the text encoder's top face. */
+.m-te .part::before, .m-dit .part::before, .m-vae .part::before { content: ""; position: absolute; left: calc(50% - 4px); width: 8px; top: 0; bottom: calc(-1 * var(--gap));
+  background: var(--oa-blue); border-left: 1px solid var(--oa-blue-deep); border-right: 1px solid var(--oa-blue-deep); }
+.m-te .part::before { top: 50%; }
+.m-vae .part::before { bottom: 50%; }
+.m-pe .part::after, .m-te::after { content: ""; position: absolute; width: 6px; border-left: 1px solid var(--cq-lav-deep); border-right: 1px solid var(--cq-lav-deep);
+  background: repeating-linear-gradient(180deg, var(--cq-lav) 0 5px, transparent 5px 8px); }
+.m-pe .part::after { left: calc(64% - 3px); top: calc(50% + var(--h) / 2); bottom: calc(-1 * var(--gap)); }
+.m-te::after { left: calc(var(--part-w) * 0.64 - 3px); top: 0; height: calc(50% - var(--h) / 2); }
 
 .lamp { position: relative; z-index: 1; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font: 500 0.875rem/1 var(--wp-font-mono); color: var(--wp-ink);
   background: radial-gradient(circle at 50% 35%, #fbfbfa, #d3d5d9); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.8); }
@@ -159,7 +168,9 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
 .m-node { font-size: var(--wp-text-cite); line-height: 1.35; color: var(--wp-muted); }
 
 /* Lit states. Not checked: hollow dashed lamp, the parts a little dim. */
-.idle .shape { opacity: 0.82; }
+/* Dimmed with a paper wash rather than opacity, so the axis behind the parts never shows through them. */
+.idle .shape::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: rgba(239, 240, 236, 0.3); }
+.m-dit.idle .shape::after { clip-path: polygon(9% 0, 91% 0, 100% 18%, 100% 82%, 91% 100%, 9% 100%, 0 82%, 0 18%); }
 .idle .lamp { background: transparent; box-shadow: none; border: 2px dashed #7c7f8a; }
 .idle .m-file { color: var(--wp-muted); }
 .pass .shape { box-shadow: inset 0 0 0 1px rgba(21, 21, 24, 0.34), 0 0 0 3px var(--oa-blue), 0 0 0 4px var(--oa-blue-deep); }
@@ -190,8 +201,8 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
 .missing .lamp::after { content: "?"; }
 .missing .m-state { color: var(--wp-rust); }
 
-.assembly-figure { margin: 0; display: grid; gap: var(--wp-4); }
-.assembly-figure figcaption { display: grid; gap: var(--wp-3); color: var(--wp-muted); font-size: var(--wp-text-meta); line-height: 1.5; }
+.assembly-figure { margin: 0; scroll-margin-top: var(--wp-4); }
+.assembly-key { display: grid; gap: var(--wp-3); color: var(--wp-muted); font-size: var(--wp-text-meta); line-height: 1.5; }
 .key { display: flex; flex-wrap: wrap; align-items: center; gap: var(--wp-2) var(--wp-6); color: var(--wp-ink); font-weight: 500; }
 .key-item { display: inline-flex; align-items: center; gap: var(--wp-3); white-space: nowrap; }
 .key-path, .key-pe { display: inline-block; width: 22px; height: 6px; border: 1px solid var(--oa-blue-deep); background: var(--oa-blue); }
@@ -283,8 +294,29 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
 
 @media (max-width: 900px) {
   .bench { padding: var(--wp-8) 0 var(--wp-12); }
-  .bench-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "form" "art" "result"; grid-template-rows: none; gap: var(--wp-8); }
-  .assembly-figure { position: static; }
+  .bench-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "form" "art" "result" "key"; grid-template-rows: none; gap: var(--wp-6); }
+  /* One column: the drawing sits between the actions and the result, and its key moves under the result. */
+  .art { display: contents; }
+  .assembly-figure { grid-area: art; }
+  .assembly-key { grid-area: key; }
+  .plate { padding: var(--wp-3); }
+  .plate-label { margin-bottom: var(--wp-3); }
+  .assembly { --part-w: 4.5rem; --gap: 0.625rem; }
+  /* The state word rides on the role line when it fits, so each row is role, file, loader. */
+  .m-text { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 0.5em; }
+  .m-file, .m-node { flex-basis: 100%; }
+  .module { gap: var(--wp-4); }
+  .m-pe { --h: 1.75rem; }
+  .m-te { --h: 2.5rem; }
+  .m-dit { --h: 3.5rem; }
+  .m-vae { --h: 1.5rem; }
+  .m-pe .shape { left: 14%; right: 2%; }
+  .m-te .shape { left: 4%; right: 4%; background: repeating-linear-gradient(90deg, transparent 0 8px, rgba(21, 21, 24, 0.2) 8px 10px, rgba(255, 255, 255, 0.6) 10px 11px), var(--cq-metal); }
+  .m-vae .shape { left: 10%; right: 10%; }
+  .m-dit .shape::before { background: radial-gradient(circle at 50% 50%, transparent 0 13px, rgba(21, 21, 24, 0.35) 13px 15px, rgba(255, 255, 255, 0.7) 15px 16px, transparent 16px), var(--cq-metal-side); }
+  .lamp { width: 22px; height: 22px; font-size: 0.75rem; }
+  .fail .lamp { font-size: 1rem; }
+  .fail .shape, .dormant .shape { outline-offset: 3px; }
   .finding .wrap, .limits .wrap { grid-template-columns: minmax(0, 1fr); gap: var(--wp-8); }
   .finding, .limits { padding: var(--wp-12) 0; }
 }
@@ -298,12 +330,7 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
   .badge-more { display: none; }
   .drop { padding: var(--wp-4); }
   .pick .btn, .submit-row .btn { width: 100%; }
-  .plate { padding: var(--wp-4) var(--wp-4) var(--wp-6); }
-  .assembly { --part-w: 6.25rem; --gap: 1.5rem; }
-  .module { gap: var(--wp-4); }
-  .m-dit { --h: 4.5rem; }
-  .m-dit .shape::before { background: radial-gradient(circle at 50% 50%, transparent 0 15px, rgba(21, 21, 24, 0.35) 15px 17px, rgba(255, 255, 255, 0.7) 17px 18px, transparent 18px), var(--cq-metal-side); }
-  .m-node, .assembly-figure figcaption, .src summary, .vram caption, .vram-note, .measured .hint, .site-footer .muted, .limit, #example-note, .drop-status { font-size: 1rem; }
+  .m-node, .assembly-key, .src summary, .vram caption, .vram-note, .measured .hint, .site-footer .muted, .limit, #example-note, .drop-status { font-size: 1rem; }
   .m-file, .v-sub, .where { font-size: 0.875rem; }
   .v-file { display: none !important; }
   .vram .num-col { width: 3.25rem; }

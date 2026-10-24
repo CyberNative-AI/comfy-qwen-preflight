@@ -163,7 +163,7 @@ test('(a) the built-in broken example lights the enhancer and gives both repair 
   assert.match(fix, /The edit PE runs without its system prompt/);
   assert.match(fix, /system_prompt/);
   assert.match(fix, /use_default_template/);
-  assert.match(await page.textContent('#assembly-state'), /1 to fix, listed below/);
+  assert.match(await page.textContent('#assembly-state'), /^as your workflow fills them · 1 to fix$/);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -176,6 +176,7 @@ test('(b) connecting the system prompt and turning use_default_template on clear
   await check(page, repairExample(example, { connect: true, template: true }));
   assert.match(await page.textContent('#verdict'), /^Nothing to fix in what this page can check\./);
   assert.ok(await page.isHidden('#fixes-wrap'));
+  assert.match(await page.textContent('#assembly-state'), /^as your workflow fills them · 0 to fix$/);
   assert.equal(await page.$eval('#slots .m-pe', li => li.className.includes('pass')), true);
   assert.match(await page.textContent('#passes'), /system prompt/i);
   await check(page, repairExample(example, { connect: true, template: false }));
@@ -280,6 +281,21 @@ test('320, 390 and 1440 renders have no horizontal overflow before or after a ch
   }
 });
 
+test('on a phone the lit drawing and the start of the fix share the first screen after "Try the example"', async () => {
+  for (const width of [390, 320]) {
+    const { page, errors } = await open(width);
+    await page.setViewportSize({ width, height: 844 });
+    await page.evaluate(() => document.fonts.ready);
+    await page.click('#example');
+    await page.waitForSelector('#fixes-wrap:not([hidden])');
+    const { art, fix, vh } = await page.evaluate(() => ({ art: document.querySelector('#assembly').getBoundingClientRect().top, fix: document.querySelector('#fixes .fix').getBoundingClientRect().top, vh: innerHeight }));
+    assert.ok(art >= 0 && art < 100, `${width}: drawing top at ${art}`);
+    assert.ok(fix < vh - 48, `${width}: fix card top at ${Math.round(fix)} of ${vh}`);
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
+});
+
 test('keyboard: the actions come first and every stop shows a focus ring', async () => {
   const { page } = await open(390);
   const stops = [];
@@ -302,6 +318,7 @@ test('with JavaScript off the page explains why it cannot check, and hides the f
   await page.goto(origin + '/', { waitUntil: 'networkidle' });
   assert.ok(await page.isVisible('.nojs'));
   assert.match(await page.textContent('.nojs'), /cannot run here/);
+  assert.doesNotMatch(await page.textContent('.nojs'), /beside|to the (left|right)/);
   assert.ok(await page.isHidden('#form'));
   assert.ok(await page.isHidden('#result'));
   assert.ok(await page.isVisible('#assembly'));
