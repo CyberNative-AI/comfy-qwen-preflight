@@ -332,6 +332,33 @@ test('first screen: an example result, the maker and a 48 px upload target; the 
   }
 });
 
+test('48 px byline on every line; the example is solid-bordered and as wide as the drop zone under it', async () => {
+  for (const width of [320, 390, 1440]) {
+    const { page, errors } = await open(width);
+    await page.evaluate(() => document.fonts.ready);
+    const lines = await page.evaluate(() => {
+      const a = document.querySelector('.maker a');
+      return [...a.getClientRects()].map(r => {
+        const hits = y => { const e = document.elementFromPoint(r.left + Math.min(r.width / 2, 40), y); return !!e && a.contains(e); };
+        return { height: r.height, top: hits(r.top + 1), bottom: hits(r.bottom - 1) };
+      });
+    });
+    if (width === 320) assert.equal(lines.length, 2, 'the byline wraps at 320');
+    for (const line of lines) assert.ok(line.height >= 48 && line.top && line.bottom, `${width}: ${JSON.stringify(line)}`);
+    // A dashed border on this page means "drop here": the example must not look like a second drop target.
+    const [sample, drop] = await page.evaluate(() => ['#sample-result', '.drop'].map(s => {
+      const e = document.querySelector(s), r = e.getBoundingClientRect();
+      return { left: Math.round(r.left), right: Math.round(r.right), style: getComputedStyle(e).borderTopStyle };
+    }));
+    assert.equal(sample.style, 'solid');
+    assert.equal(drop.style, 'dashed');
+    assert.deepEqual([sample.left, sample.right], [drop.left, drop.right], `${width}: one column edge`);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0);
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
+});
+
 test('the example result gives way to a real result: after "Try the example" and after a dropped file', async () => {
   for (const route of ['example', 'file']) {
     const { page, errors } = await open(390);
