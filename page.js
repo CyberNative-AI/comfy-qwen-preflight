@@ -94,6 +94,8 @@ function resetModules(reason) {
 }
 
 function render(r) {
+  // The static example result above the form gives way to a real one.
+  byId('sample-result').hidden = true;
   const verdict = byId('verdict');
   const parts = ['fixes-wrap', 'vram-wrap', 'notes-wrap', 'passes-wrap'].map(byId);
   for (const p of parts) p.hidden = true;

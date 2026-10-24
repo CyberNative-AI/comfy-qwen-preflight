@@ -21,7 +21,7 @@
   <header class="site-header">
     <div class="wrap">
       <span class="brand"><a class="brand-link" href="https://cybernative.ai/" aria-label="CyberNative home"><img src="assets/cn-mark-header.svg" alt="" width="32" height="32"><span class="wordmark">cybernative</span></a> <span class="product">Qwen-Image 2.1 preflight</span></span>
-      <span class="local-badge" title="The check runs in this tab. The page's security policy blocks every network request.">Runs offline<span class="badge-more"> in this tab</span></span>
+      <span class="local-badge" title="The check runs in this tab. The page's security policy blocks every network request.">Runs<span class="badge-more"> in your browser,</span> offline</span>
     </div>
   </header>
 
@@ -31,7 +31,13 @@
         <div class="bench-copy">
           <p class="label"><b>Free check</b> · Qwen-Image 2.1 in ComfyUI</p>
           <h1 id="title">Check your Qwen&#8209;Image&nbsp;2.1 workflow before the first&nbsp;run.</h1>
-          <p class="lede">Up to four model files, and some mistakes run without an error: the prompt enhancer in the text-encoder slot, or the enhancer without its system prompt. Add your exported workflow and get a short list of what to fix.</p>
+          <p class="maker"><a href="https://cybernative.ai/about/">Made by CyberNative AI LLC, an AI-run company</a></p>
+          <p class="lede">Some wiring mistakes run without an error and still change your images. Add your exported workflow and get a short list of what to fix.</p>
+          <div class="sample" id="sample-result" role="group" aria-labelledby="sample-label">
+            <p class="sample-tag" id="sample-label">Example result <span>· official template</span></p>
+            <p class="sample-verdict"><span class="sample-key">Fix</span> Prompt enhancer: The edit PE runs without its system prompt</p>
+            <p class="sample-fix"><span class="sample-key">First step</span> Connect a String (Multiline) node holding the PE-I2I system_prompt.txt to the system_prompt input.</p>
+          </div>
         </div>
 
         <noscript>
@@ -49,7 +55,7 @@
               <label class="btn btn-primary file-btn" for="file">Choose a workflow .json<input id="file" type="file" accept=".json,application/json"></label>
               <button class="btn btn-quiet" type="button" id="example">Try the example</button>
             </div>
-            <p class="hint" id="example-note">The example is the official Image Edit template as templates package 0.11.70 wires it. First time? <a href="first-use.html">Try a broken sample and its repair</a>.</p>
+            <p class="hint" id="example-note">“Try the example” checks the official Image Edit template from package 0.11.70 in one click. To practise the whole loop, <a href="first-use.html">download a broken file and its repair</a> and check each one yourself.</p>
             <p class="hint drop-status" id="file-status" aria-live="polite">Or drop the file here, or paste it below.</p>
           </div>
           <p class="limit"><span class="label-limit">Private</span> Your workflow stays in this tab. Nothing is uploaded or stored, and the page’s security policy blocks every network request.</p>
@@ -156,6 +162,7 @@
     <div class="wrap">
       <p>Prepared by <a href="https://cybernative.ai/">CyberNative AI LLC</a>, an AI-run company, using AI agents.</p>
       <p>An independent free tool by CyberNative. Not affiliated with Qwen, Alibaba Cloud or Comfy Org.</p>
+      <p class="links"><a href="https://cybernative.ai/breakage-calendar/#wbn-email-calendar">Get the weekly email: what breaks next</a> <a href="https://github.com/CyberNative-AI/comfy-qwen-preflight" rel="noopener noreferrer">Source on GitHub</a></p>
       <p class="muted">Rules come from the Comfy-Org and Qwen model repositories, the official ComfyUI templates, and the ComfyUI source at v0.37.0 and v0.38.0. Each result links to its source. The example and test templates are from Comfy-Org/workflow_templates, used under the <a href="fixtures/official/LICENSE.txt">MIT License, © Comfy Org</a>.</p>
     </div>
   </footer>

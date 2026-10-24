@@ -296,6 +296,60 @@ test('on a phone the lit drawing and the start of the fix share the first screen
   }
 });
 
+test('first screen: an example result, the maker and a 48 px upload target; the weekly email and source are in the footer', async () => {
+  const { check } = await import('../engine.js');
+  const { OFFICIAL_IMAGE_EDIT } = await import('../example.js');
+  const real = check(OFFICIAL_IMAGE_EDIT, '', {});
+  const [fix] = real.findings.filter(f => f.status === 'fail');
+  for (const width of [390, 1440]) {
+    const { page, errors } = await open(width);
+    await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
+    await page.evaluate(() => document.fonts.ready);
+    // The sample is the bundled example's real output: the enhancer slot marked Fix, its finding and the fix's first step.
+    assert.equal(real.slots[0].status, 'fail');
+    assert.match(await page.textContent('.m-pe .m-role'), /^Prompt enhancer/);
+    assert.equal(await page.textContent('#sample-result .sample-verdict'), `Fix Prompt enhancer: ${fix.title}`);
+    const step = (await page.textContent('#sample-result .sample-fix')).replace(/^First step\s*/, '').replace(/\.$/, '');
+    assert.ok(fix.fix.startsWith(step + ' '), step);
+    assert.match(await page.textContent('#sample-label'), /^Example result/);
+    const vh = 0 + (await page.viewportSize()).height;
+    const bottom = sel => page.evaluate(s => document.querySelector(s).getBoundingClientRect().bottom, sel);
+    assert.ok(await bottom('#sample-result') <= vh, `${width}: sample ends at ${await bottom('#sample-result')}`);
+    assert.ok(await bottom('.maker') <= vh, 'maker line on the first screen');
+    assert.ok(await bottom('label.file-btn') <= vh, 'upload button on the first screen');
+    assert.equal(await page.textContent('.maker a'), 'Made by CyberNative AI LLC, an AI-run company');
+    assert.equal(await page.getAttribute('.maker a', 'href'), 'https://cybernative.ai/about/');
+    const target = await page.locator('#file').boundingBox();
+    assert.ok(target.height >= 48, `upload target is ${target.height} px tall`);
+    assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.local-badge'), '::before').content), 'none', 'no status dot');
+    assert.equal((await page.textContent('.local-badge')).replace(/\s+/g, ' '), 'Runs in your browser, offline');
+    assert.equal(await page.isVisible('.local-badge .badge-more'), width >= 600, 'a phone shows "Runs offline"');
+    assert.equal(await page.getAttribute('.site-footer a >> text=Get the weekly email: what breaks next', 'href'), 'https://cybernative.ai/breakage-calendar/#wbn-email-calendar');
+    assert.equal(await page.getAttribute('.site-footer a >> text=Source on GitHub', 'href'), 'https://github.com/CyberNative-AI/comfy-qwen-preflight');
+    assert.equal(await page.locator('.site-footer form').count(), 0, 'a link, not a form');
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
+});
+
+test('the example result gives way to a real result: after "Try the example" and after a dropped file', async () => {
+  for (const route of ['example', 'file']) {
+    const { page, errors } = await open(390);
+    assert.equal(await page.isVisible('#sample-result'), true);
+    if (route === 'example') await page.click('#example');
+    else {
+      const dir = await mkdtemp(join(tmpdir(), 'qwen-preflight-'));
+      const file = join(dir, 'my_workflow.json');
+      await writeFile(file, REPORTED.find(c => c.id === 'R1').workflow());
+      await page.setInputFiles('#file', file);
+    }
+    await page.waitForSelector('#slots .slot:not(.idle)');
+    assert.equal(await page.isVisible('#sample-result'), false, route);
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
+});
+
 test('keyboard: the actions come first and every stop shows a focus ring', async () => {
   const { page } = await open(390);
   const stops = [];

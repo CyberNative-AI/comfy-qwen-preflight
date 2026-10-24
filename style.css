@@ -73,7 +73,6 @@ code { font-size: 0.9375em; overflow-wrap: anywhere; }
 .wordmark { font: 600 1.5rem/1 var(--wp-font-display); letter-spacing: -0.054em; }
 .brand .product { color: var(--oa-muted); font-weight: 500; padding-left: 14px; border-left: 1px solid var(--oa-line); white-space: nowrap; }
 .local-badge { font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--oa-paper); border: 1px solid var(--oa-line); border-radius: var(--wp-pill); padding: 7px 12px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
-.local-badge::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--oa-blue); }
 
 /* buttons: graphite pill with paper type; hover is blue-deep */
 .btn { display: inline-flex; align-items: center; justify-content: center; min-height: var(--wp-tap); padding: 0 var(--wp-6); border-radius: var(--wp-pill); font: 600 1rem/1.2 var(--wp-font-body); text-decoration: none; cursor: pointer; text-align: center; }
@@ -88,6 +87,16 @@ code { font-size: 0.9375em; overflow-wrap: anywhere; }
 .bench-copy { grid-area: copy; display: grid; gap: var(--wp-4); }
 .bench-copy h1 { max-width: 13em; }
 .lede { font-size: var(--wp-text-lede); line-height: 1.5; max-width: 36em; }
+/* Byline under the headline: who made the tool. */
+.maker { margin-top: calc(-1 * var(--wp-2)); font-size: var(--wp-text-meta); font-weight: 500; }
+/* A static sample of the bundled example's real output. Dashed and tagged so it never reads as the visitor's own
+   result; page.js hides it once a real result renders. */
+.sample { max-width: 36em; display: grid; gap: var(--wp-2); padding: var(--wp-3) var(--wp-4); border: 1px dashed var(--wp-muted); border-radius: var(--wp-radius); background: var(--wp-panel); }
+.sample-tag, .sample-key { font: 500 var(--wp-text-cite)/1.2 var(--wp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp-ink); }
+.sample-tag span { color: var(--wp-muted); }
+.sample-key { margin-right: .5em; }
+.sample-verdict { font-weight: 600; line-height: 1.35; }
+.sample-fix { font-size: 0.9375rem; line-height: 1.5; overflow-wrap: anywhere; }
 .bench-form { grid-area: form; }
 .art { grid-area: art; position: sticky; top: var(--wp-4); display: grid; gap: var(--wp-4); }
 .result { grid-area: result; }
@@ -99,7 +108,8 @@ form { display: grid; gap: var(--wp-4); min-width: 0; }
 .drop.over { background: var(--cq-blue-tint); border-style: solid; border-color: var(--oa-blue-deep); }
 .pick { display: flex; flex-wrap: wrap; gap: var(--wp-3); }
 .file-btn { position: relative; }
-.file-btn input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+/* The input covers the label's border box too, so the tap target is the full 48 px. */
+.file-btn input { position: absolute; inset: -2px; opacity: 0; cursor: pointer; }
 .file-btn:has(input:focus-visible) { outline: 3px solid var(--wp-focus); outline-offset: 3px; }
 #example-note, .drop-status { font-size: 0.9375rem; line-height: 1.5; }
 .drop-status { color: var(--wp-ink); }
@@ -290,6 +300,8 @@ input:not([type="file"]):focus-visible, textarea:focus-visible { outline-offset:
 .site-footer .wrap { display: grid; gap: var(--wp-2); }
 .site-footer a { color: var(--oa-paper); text-decoration-color: var(--oa-blue); }
 .site-footer a:hover { color: var(--oa-blue); }
+.site-footer .links { display: flex; flex-wrap: wrap; gap: 0 var(--wp-6); }
+.site-footer .links a { min-height: var(--wp-tap); display: inline-flex; align-items: center; font-weight: 500; }
 .site-footer .muted { color: var(--oa-muted); font-size: var(--wp-text-meta); max-width: 60em; }
 
 @media (max-width: 900px) {
