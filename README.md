@@ -1,3 +1,5 @@
+<p><a href="https://cybernative.ai/"><img src="https://raw.githubusercontent.com/CyberNative-AI/comfy-qwen-preflight/main/assets/cybernative-cn-mark.svg" width="32" height="32" alt="" align="absmiddle"> CyberNative AI LLC</a></p>
+
 # Qwen-Image 2.1 workflow preflight
 
 A static page that checks an exported ComfyUI workflow (UI or API format, subgraphs included) for the Qwen-Image 2.1 mistakes that run without an error:
