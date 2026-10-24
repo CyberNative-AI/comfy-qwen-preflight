@@ -305,12 +305,14 @@ test('first screen: an example result, the maker and a 48 px upload target; the 
     const { page, errors } = await open(width);
     await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
     await page.evaluate(() => document.fonts.ready);
-    // The sample is the bundled example's real output: the enhancer slot marked Fix, its finding and the fix's first step.
+    // The sample is the bundled example's real output: the enhancer finding, and the fix's first sentence without its
+    // version note (both clauses, so a reader who follows it alone does not keep the bug).
     assert.equal(real.slots[0].status, 'fail');
     assert.match(await page.textContent('.m-pe .m-role'), /^Prompt enhancer/);
-    assert.equal(await page.textContent('#sample-result .sample-verdict'), `Fix Prompt enhancer: ${fix.title}`);
-    const step = (await page.textContent('#sample-result .sample-fix')).replace(/^First step\s*/, '').replace(/\.$/, '');
-    assert.ok(fix.fix.startsWith(step + ' '), step);
+    assert.equal(await page.textContent('#sample-result .sample-verdict'), `Found Prompt enhancer: ${fix.title}`);
+    const firstSentence = fix.fix.slice(0, fix.fix.indexOf('. ') + 1).replace(' (ComfyUI 0.38.0+)', '');
+    assert.match(firstSentence, /, and turn use_default_template on\.$/);
+    assert.equal((await page.textContent('#sample-result .sample-fix')).replace(/^Fix\s*/, ''), firstSentence);
     assert.match(await page.textContent('#sample-label'), /^Example result/);
     const vh = 0 + (await page.viewportSize()).height;
     const bottom = sel => page.evaluate(s => document.querySelector(s).getBoundingClientRect().bottom, sel);

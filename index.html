@@ -35,8 +35,8 @@
           <p class="lede">Some wiring mistakes run without an error and still change your images. Add your exported workflow and get a short list of what to fix.</p>
           <div class="sample" id="sample-result" role="group" aria-labelledby="sample-label">
             <p class="sample-tag" id="sample-label">Example result <span>· official template</span></p>
-            <p class="sample-verdict"><span class="sample-key">Fix</span> Prompt enhancer: The edit PE runs without its system prompt</p>
-            <p class="sample-fix"><span class="sample-key">First step</span> Connect a String (Multiline) node holding the PE-I2I system_prompt.txt to the system_prompt input.</p>
+            <p class="sample-verdict"><span class="sample-key">Found</span> Prompt enhancer: The edit PE runs without its system prompt</p>
+            <p class="sample-fix"><span class="sample-key">Fix</span> Connect a String (Multiline) node holding the PE-I2I system_prompt.txt to the system_prompt input, and turn use_default_template on.</p>
           </div>
         </div>
 
@@ -55,7 +55,7 @@
               <label class="btn btn-primary file-btn" for="file">Choose a workflow .json<input id="file" type="file" accept=".json,application/json"></label>
               <button class="btn btn-quiet" type="button" id="example">Try the example</button>
             </div>
-            <p class="hint" id="example-note">“Try the example” checks the official Image Edit template from package 0.11.70 in one click. To practise the whole loop, <a href="first-use.html">download a broken file and its repair</a> and check each one yourself.</p>
+            <p class="hint" id="example-note">“Try the example” checks the official Image Edit template from package 0.11.70 in one click. To see a fix work end to end, <a href="first-use.html">download a broken file and its repair</a> and check both.</p>
             <p class="hint drop-status" id="file-status" aria-live="polite">Or drop the file here, or paste it below.</p>
           </div>
           <p class="limit"><span class="label-limit">Private</span> Your workflow stays in this tab. Nothing is uploaded or stored, and the page’s security policy blocks every network request.</p>
